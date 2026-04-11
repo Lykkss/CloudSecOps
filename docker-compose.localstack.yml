@@ -1,0 +1,24 @@
+services:
+  localstack:
+    image: localstack/localstack:3.4
+    container_name: localstack-cloudsecops
+    ports:
+      - "4566:4566"       # Gateway API (tous les services AWS)
+      - "4510-4559:4510-4559"  # Ports additionnels pour certains services
+    environment:
+      - SERVICES=ec2,s3,iam,sts,cloudtrail,cloudwatch,logs,rds
+      - DEBUG=0
+      - AWS_DEFAULT_REGION=eu-west-3
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:-}  # Optionnel (plan Pro)
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - localstack_data:/var/lib/localstack
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+volumes:
+  localstack_data:

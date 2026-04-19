@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     # PostgreSQL
     DATABASE_URL: str = "postgresql://cloudsecops:changeme-local-dev@localhost:5432/cloudsecops"
 
+    # Clé API pour les appels machine-to-machine (CI/CD → /scans)
+    CI_API_KEY: str = "changeme-ci-api-key"
+
     class Config:
         env_file = "../../.env"
         extra = "ignore"

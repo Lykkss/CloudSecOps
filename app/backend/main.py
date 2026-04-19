@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from core.database import Base, engine
-from routers import auth, health, users
+from routers import auth, health, incidents, reports, scans, users
 
 # Création des tables au démarrage (remplacer par Alembic en prod)
 Base.metadata.create_all(bind=engine)
@@ -33,9 +33,12 @@ Architecture **Zero Trust** avec authentification JWT et contrôle d'accès RBAC
 """
 
 _TAGS = [
-    {"name": "auth",   "description": "Authentification — obtenir et valider un JWT"},
-    {"name": "users",  "description": "Gestion des comptes utilisateurs (RBAC)"},
-    {"name": "health", "description": "Vérification de l'état du service"},
+    {"name": "auth",      "description": "Authentification — obtenir et valider un JWT"},
+    {"name": "users",     "description": "Gestion des comptes utilisateurs (RBAC)"},
+    {"name": "scans",     "description": "Résultats de scans de vulnérabilités (Trivy)"},
+    {"name": "incidents", "description": "Incidents de sécurité et simulations (IAM compromise…)"},
+    {"name": "reports",   "description": "Rapports d'investigation forensique"},
+    {"name": "health",    "description": "Vérification de l'état du service"},
 ]
 
 app = FastAPI(
@@ -60,6 +63,9 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(scans.router)
+app.include_router(incidents.router)
+app.include_router(reports.router)
 
 # Interface web (servie sous /ui)
 _FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")

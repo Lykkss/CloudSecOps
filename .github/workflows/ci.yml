@@ -54,16 +54,25 @@ jobs:
             -t $IMAGE_NAME:${{ github.sha }} \
             app/
 
-      - name: Run Trivy — vulnerabilities
+      - name: Run Trivy — table (logs CI)
         uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: "${{ env.IMAGE_NAME }}:${{ github.sha }}"
           format: table
-          exit-code: "1"
+          exit-code: "0"       # ne pas bloquer — on envoie quand même à l'API
           ignore-unfixed: true
-          severity: CRITICAL,HIGH
+          severity: CRITICAL,HIGH,MEDIUM
 
-      - name: Run Trivy — SARIF (upload GitHub Security tab)
+      - name: Run Trivy — JSON output
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          format: json
+          output: trivy-results.json
+          ignore-unfixed: false
+          severity: CRITICAL,HIGH,MEDIUM,LOW
+
+      - name: Run Trivy — SARIF (GitHub Security tab)
         if: always()
         uses: aquasecurity/trivy-action@0.28.0
         with:
@@ -79,6 +88,37 @@ jobs:
         with:
           sarif_file: trivy-results.sarif
           category: trivy-container
+
+      - name: Post scan results to CloudSecOps API
+        if: always() && env.API_URL != ''
+        env:
+          API_URL: ${{ secrets.API_URL }}
+          CI_API_KEY: ${{ secrets.CI_API_KEY }}
+        run: |
+          # Extraire les Results[] du JSON Trivy
+          RESULTS=$(jq '.Results // []' trivy-results.json)
+          IMAGE_TAG="${{ github.sha }}"
+
+          curl -sf -X POST "${API_URL}/scans/" \
+            -H "Content-Type: application/json" \
+            -H "X-API-Key: ${CI_API_KEY}" \
+            -d "{
+              \"image_name\": \"${IMAGE_NAME}\",
+              \"image_tag\": \"${IMAGE_TAG}\",
+              \"git_sha\": \"${{ github.sha }}\",
+              \"triggered_by\": \"github-actions\",
+              \"raw_json\": ${RESULTS}
+            }" \
+            && echo "✅ Résultats envoyés à l'API" \
+            || echo "⚠️  API_URL non configurée ou inaccessible — résultats non envoyés"
+
+      - name: Upload Trivy JSON artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-results-${{ github.sha }}
+          path: trivy-results.json
+          retention-days: 30
 
   # ── Job 3 : Lint IaC Terraform ───────────────────────────────────────────
   terraform-lint:

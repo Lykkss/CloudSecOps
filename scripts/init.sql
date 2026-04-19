@@ -40,6 +40,49 @@ CREATE TABLE IF NOT EXISTS log_entry (
     created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS scan_result (
+    id_scan        SERIAL PRIMARY KEY,
+    scanned_at     TIMESTAMPTZ DEFAULT NOW(),
+    image_name     VARCHAR(255) NOT NULL,
+    image_tag      VARCHAR(100) NOT NULL,
+    git_sha        VARCHAR(40),
+    critical_count INTEGER DEFAULT 0,
+    high_count     INTEGER DEFAULT 0,
+    medium_count   INTEGER DEFAULT 0,
+    low_count      INTEGER DEFAULT 0,
+    status         VARCHAR(20) DEFAULT 'passed',
+    raw_json       TEXT,
+    triggered_by   VARCHAR(100) DEFAULT 'ci'
+);
+
+CREATE TABLE IF NOT EXISTS incident (
+    id_incident       SERIAL PRIMARY KEY,
+    created_at        TIMESTAMPTZ DEFAULT NOW(),
+    updated_at        TIMESTAMPTZ,
+    type              VARCHAR(100) NOT NULL,
+    title             VARCHAR(255) NOT NULL,
+    severity          VARCHAR(20) DEFAULT 'high',
+    status            VARCHAR(20) DEFAULT 'open',
+    affected_resource VARCHAR(255),
+    description       TEXT,
+    timeline          TEXT,
+    ioc               TEXT,
+    id_user           INTEGER REFERENCES user_account(id_user)
+);
+
+CREATE TABLE IF NOT EXISTS forensic_report (
+    id_report         SERIAL PRIMARY KEY,
+    created_at        TIMESTAMPTZ DEFAULT NOW(),
+    updated_at        TIMESTAMPTZ,
+    title             VARCHAR(255) NOT NULL,
+    status            VARCHAR(20) DEFAULT 'draft',
+    id_incident       INTEGER REFERENCES incident(id_incident),
+    executive_summary TEXT,
+    findings          TEXT,
+    recommendations   TEXT,
+    id_author         INTEGER REFERENCES user_account(id_user)
+);
+
 -- Rôles
 INSERT INTO role (name, description) VALUES
   ('admin', 'Administrateur — accès complet'),

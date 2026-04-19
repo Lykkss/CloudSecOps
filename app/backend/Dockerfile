@@ -3,14 +3,17 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copie des dépendances en premier (cache Docker)
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copie du code source
-COPY . .
+# Copie du code source backend
+COPY backend/ .
+
+# Copie du frontend (servi comme fichiers statiques via /ui)
+COPY frontend/ ../frontend/
 
 # Utilisateur non-root (OWASP — pas de root dans le conteneur)
-RUN useradd -m appuser && chown -R appuser:appuser /app
+RUN useradd -m appuser && chown -R appuser:appuser /app /frontend 2>/dev/null || true
 USER appuser
 
 EXPOSE 8000

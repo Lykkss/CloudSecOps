@@ -10,28 +10,75 @@ from schemas.user import UserCreate, UserResponse
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    summary="Mon profil",
+    responses={
+        200: {"description": "Profil de l'utilisateur courant"},
+        401: {"description": "Token absent ou invalide"},
+    },
+)
 def get_me(current_user: User = Depends(get_current_user)):
-    """Retourne le profil de l'utilisateur connecté."""
+    """Retourne les informations du compte authentifié (id, email, rôle, statut)."""
     return _to_response(current_user)
 
 
-@router.get("/", response_model=list[UserResponse])
+@router.get(
+    "/",
+    response_model=list[UserResponse],
+    summary="Liste des utilisateurs",
+    responses={
+        200: {"description": "Liste complète des comptes"},
+        401: {"description": "Token absent ou invalide"},
+        403: {"description": "Rôle admin requis"},
+    },
+)
 def list_users(
     db: Session = Depends(get_db),
     _: User = Depends(require_role("admin")),
 ):
-    """Liste tous les utilisateurs — admin uniquement."""
+    """Retourne tous les comptes (actifs et inactifs) — **admin uniquement**."""
     return [_to_response(u) for u in db.query(User).all()]
 
 
-@router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    response_model=UserResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Créer un utilisateur",
+    responses={
+        201: {"description": "Compte créé"},
+        401: {"description": "Token absent ou invalide"},
+        403: {"description": "Rôle admin requis"},
+        404: {"description": "Rôle introuvable"},
+        409: {"description": "Email déjà utilisé"},
+    },
+    openapi_extra={
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "new_user": {
+                            "summary": "Nouvel utilisateur standard",
+                            "value": {"email": "alice@example.com", "password": "P@ssw0rd!", "role_id": 2},
+                        }
+                    }
+                }
+            }
+        }
+    },
+)
 def create_user(
     payload: UserCreate,
     db: Session = Depends(get_db),
     _: User = Depends(require_role("admin")),
 ):
-    """Crée un utilisateur — admin uniquement."""
+    """Crée un nouveau compte utilisateur — **admin uniquement**.
+
+    - `role_id = 1` → admin
+    - `role_id = 2` → user (lecture seule)
+    """
     if db.query(User).filter(User.email == payload.email).first():
         raise HTTPException(status_code=409, detail="Email déjà utilisé")
 
@@ -50,13 +97,27 @@ def create_user(
     return _to_response(user)
 
 
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Désactiver un utilisateur",
+    responses={
+        204: {"description": "Utilisateur désactivé (soft delete)"},
+        400: {"description": "Impossible de se désactiver soi-même"},
+        401: {"description": "Token absent ou invalide"},
+        403: {"description": "Rôle admin requis"},
+        404: {"description": "Utilisateur introuvable"},
+    },
+)
 def delete_user(
     user_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_role("admin")),
 ):
-    """Désactive un utilisateur (soft delete) — admin uniquement."""
+    """Désactive un compte (soft delete — `is_active = false`) — **admin uniquement**.
+
+    L'utilisateur ne peut pas se désactiver lui-même.
+    """
     if user_id == current_user.id_user:
         raise HTTPException(status_code=400, detail="Impossible de se désactiver soi-même")
 

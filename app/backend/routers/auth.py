@@ -11,9 +11,36 @@ from schemas.auth import LoginRequest, TokenResponse
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post(
+    "/login",
+    response_model=TokenResponse,
+    summary="Connexion",
+    responses={
+        200: {"description": "Token JWT généré avec succès"},
+        401: {"description": "Identifiants incorrects"},
+        403: {"description": "Compte désactivé"},
+    },
+    openapi_extra={
+        "requestBody": {
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "admin": {
+                            "summary": "Compte admin par défaut",
+                            "value": {"email": "admin@cloudsecops.dev", "password": "Admin1234!"},
+                        }
+                    }
+                }
+            }
+        }
+    },
+)
 def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)):
-    """Authentification JWT — retourne un token d'accès."""
+    """Authentifie un utilisateur et retourne un **access_token** JWT (HS256).
+
+    Le token est valide `ACCESS_TOKEN_EXPIRE_MINUTES` minutes (défaut : 30).
+    Inclure le token dans les requêtes suivantes : `Authorization: Bearer <token>`.
+    """
     user = db.query(User).filter(User.email == payload.email).first()
 
     # Même message d'erreur que l'utilisateur n'existe pas ou que le mot de passe

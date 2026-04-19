@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudSecOps — Connexion</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 2rem;
+    }
+    .logo svg { width: 32px; height: 32px; }
+    .logo span { font-size: 1.3rem; font-weight: 700; color: #58a6ff; }
+
+    h1 { font-size: 1.1rem; margin-bottom: 1.5rem; color: #8b949e; }
+
+    label { display: block; font-size: .85rem; color: #8b949e; margin-bottom: .35rem; }
+
+    input {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      padding: .55rem .75rem;
+      font-size: .95rem;
+      margin-bottom: 1rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input:focus { border-color: #58a6ff; }
+
+    button {
+      width: 100%;
+      background: #238636;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: .65rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    button:hover { background: #2ea043; }
+    button:disabled { background: #21262d; color: #8b949e; cursor: not-allowed; }
+
+    .error {
+      background: #3d1a1a;
+      border: 1px solid #f85149;
+      border-radius: 6px;
+      color: #f85149;
+      font-size: .85rem;
+      padding: .6rem .8rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .links { margin-top: 1.5rem; text-align: center; font-size: .82rem; color: #8b949e; }
+    .links a { color: #58a6ff; text-decoration: none; }
+    .links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>CloudSecOps</span>
+    </div>
+
+    <h1>Connectez-vous à votre compte</h1>
+
+    <div class="error" id="error-msg"></div>
+
+    <form id="login-form">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" placeholder="admin@cloudsecops.dev" required autocomplete="username" />
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password" placeholder="••••••••" required autocomplete="current-password" />
+
+      <button type="submit" id="submit-btn">Se connecter</button>
+    </form>
+
+    <div class="links">
+      <a href="/docs" target="_blank">Documentation API (Swagger)</a>
+    </div>
+  </div>
+
+  <script>
+    const API = '';  // même origine
+
+    // Rediriger si déjà connecté
+    if (localStorage.getItem('cso_token')) {
+      window.location.href = '/ui/dashboard.html';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const errBox = document.getElementById('error-msg');
+      errBox.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Connexion…';
+
+      try {
+        const res = await fetch(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('email').value.trim(),
+            password: document.getElementById('password').value,
+          }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.detail || `Erreur ${res.status}`);
+        }
+
+        const { access_token } = await res.json();
+        localStorage.setItem('cso_token', access_token);
+        window.location.href = '/ui/dashboard.html';
+
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Se connecter';
+      }
+    });
+  </script>
+</body>
+</html>

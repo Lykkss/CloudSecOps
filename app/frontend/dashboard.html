@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CloudSecOps — Tableau de bord</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #238636;
+      --green-hover: #2ea043;
+      --red: #da3633;
+      --red-hover: #f85149;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: .5rem; }
+    .nav-brand svg { width: 24px; height: 24px; }
+    .nav-brand span { font-weight: 700; color: var(--accent); font-size: 1.05rem; }
+
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .badge {
+      background: #1f2937;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: .25rem .75rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .badge span { color: var(--accent); font-weight: 600; }
+
+    .btn {
+      border: none;
+      border-radius: 6px;
+      padding: .4rem .9rem;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: var(--red-hover); }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-primary:hover { background: var(--green-hover); }
+    .btn-sm { padding: .25rem .6rem; font-size: .78rem; }
+
+    /* ── Layout ── */
+    main {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card-title .icon { font-size: 1.1rem; }
+
+    /* ── Profil ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .kv label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .kv p { font-size: .95rem; margin-top: .2rem; word-break: break-all; }
+
+    .pill {
+      display: inline-block;
+      border-radius: 20px;
+      padding: .15rem .65rem;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+    .pill-admin { background: #1d3a5e; color: var(--accent); }
+    .pill-user  { background: #1a2f1a; color: #3fb950; }
+    .pill-active   { background: #1a2f1a; color: #3fb950; }
+    .pill-inactive { background: #3d1a1a; color: var(--red-hover); }
+
+    /* ── Table utilisateurs ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    th {
+      text-align: left;
+      padding: .5rem .75rem;
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: .6rem .75rem;
+      border-bottom: 1px solid #21262d;
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1c2128; }
+
+    /* ── Formulaire création ── */
+    .create-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto auto;
+      gap: .75rem;
+      align-items: end;
+    }
+    .form-group label { display: block; font-size: .8rem; color: var(--muted); margin-bottom: .3rem; }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: .45rem .65rem;
+      font-size: .88rem;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: var(--accent); }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #1c2128;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+      font-size: .88rem;
+      max-width: 320px;
+      display: none;
+      z-index: 999;
+    }
+    .toast.success { border-color: #3fb950; color: #3fb950; }
+    .toast.error   { border-color: var(--red-hover); color: var(--red-hover); }
+
+    /* ── Loader ── */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 640px) {
+      .create-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span>CloudSecOps</span>
+    </div>
+    <div class="nav-right">
+      <div class="badge" id="user-badge">…</div>
+      <a href="/docs" target="_blank" class="btn btn-primary" style="text-decoration:none">Swagger</a>
+      <button class="btn btn-danger" onclick="logout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <!-- Contenu -->
+  <main>
+
+    <!-- Carte profil -->
+    <div class="card">
+      <div class="card-title"><span class="icon">👤</span> Mon profil</div>
+      <div id="profile-content"><span class="spinner"></span></div>
+    </div>
+
+    <!-- Carte admin : liste + création -->
+    <div class="card hidden" id="admin-panel">
+      <div class="card-title"><span class="icon">🛡️</span> Gestion des utilisateurs</div>
+
+      <!-- Formulaire création -->
+      <form class="create-form" id="create-form" style="margin-bottom:1.5rem">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input id="new-email" type="email" placeholder="user@example.com" required />
+        </div>
+        <div class="form-group">
+          <label>Mot de passe</label>
+          <input id="new-password" type="password" placeholder="••••••••" required minlength="8" />
+        </div>
+        <div class="form-group">
+          <label>Rôle ID</label>
+          <select id="new-role">
+            <option value="2">user (2)</option>
+            <option value="1">admin (1)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary" style="white-space:nowrap">+ Créer</button>
+      </form>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>E-mail</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+              <th>Créé le</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="users-tbody">
+            <tr><td colspan="6"><span class="spinner"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const API = '';
+    let currentUserId = null;
+
+    // ── Auth ──────────────────────────────────────────────────────────────────
+    const token = localStorage.getItem('cso_token');
+    if (!token) window.location.href = '/ui/index.html';
+
+    function authHeaders() {
+      return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+    }
+
+    function logout() {
+      localStorage.removeItem('cso_token');
+      window.location.href = '/ui/index.html';
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+    function toast(msg, type = 'success') {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = `toast ${type}`;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 3500);
+    }
+
+    // ── Profil ────────────────────────────────────────────────────────────────
+    async function loadProfile() {
+      const res = await fetch(`${API}/users/me`, { headers: authHeaders() });
+      if (res.status === 401) { logout(); return; }
+      const u = await res.json();
+      currentUserId = u.id_user;
+
+      document.getElementById('user-badge').innerHTML =
+        `<span>${u.email}</span> &nbsp; ${rolePill(u.role)}`;
+
+      document.getElementById('profile-content').innerHTML = `
+        <div class="profile-grid">
+          <div class="kv"><label>ID</label><p>${u.id_user}</p></div>
+          <div class="kv"><label>E-mail</label><p>${esc(u.email)}</p></div>
+          <div class="kv"><label>Rôle</label><p>${rolePill(u.role)}</p></div>
+          <div class="kv"><label>Statut</label><p>${statusPill(u.is_active)}</p></div>
+          <div class="kv"><label>Créé le</label><p>${fmtDate(u.created_at)}</p></div>
+        </div>`;
+
+      if (u.role === 'admin') {
+        document.getElementById('admin-panel').classList.remove('hidden');
+        await loadUsers();
+      }
+    }
+
+    // ── Utilisateurs (admin) ──────────────────────────────────────────────────
+    async function loadUsers() {
+      const res = await fetch(`${API}/users/`, { headers: authHeaders() });
+      const users = await res.json();
+      const tbody = document.getElementById('users-tbody');
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td>${u.id_user}</td>
+          <td>${esc(u.email)}</td>
+          <td>${rolePill(u.role)}</td>
+          <td>${statusPill(u.is_active)}</td>
+          <td>${fmtDate(u.created_at)}</td>
+          <td>
+            ${u.id_user !== currentUserId && u.is_active
+              ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id_user})">Désactiver</button>`
+              : '<span style="color:var(--muted);font-size:.78rem">—</span>'}
+          </td>
+        </tr>`).join('');
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Désactiver cet utilisateur ?')) return;
+      const res = await fetch(`${API}/users/${id}`, {
+        method: 'DELETE',
+        headers: authHeaders(),
+      });
+      if (res.status === 204) {
+        toast('Utilisateur désactivé');
+        await loadUsers();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast(d.detail || 'Erreur', 'error');
+      }
+    }
+
+    // ── Création utilisateur ──────────────────────────────────────────────────
+    document.getElementById('create-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const body = {
+        email: document.getElementById('new-email').value.trim(),
+        password: document.getElementById('new-password').value,
+        role_id: parseInt(document.getElementById('new-role').value),
+      };
+      const res = await fetch(`${API}/users/`, {
+        method: 'POST',
+        headers: authHeaders(),
+        body: JSON.stringify(body),
+      });
+      if (res.status === 201) {
+        toast('Utilisateur créé avec succès');
+        e.target.reset();
+        await loadUsers();
+      } else {
+        const d = await res.json().catch(() => ({}));
+        toast(d.detail || 'Erreur création', 'error');
+      }
+    });
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function rolePill(r) {
+      return r === 'admin'
+        ? `<span class="pill pill-admin">admin</span>`
+        : `<span class="pill pill-user">user</span>`;
+    }
+    function statusPill(active) {
+      return active
+        ? `<span class="pill pill-active">actif</span>`
+        : `<span class="pill pill-inactive">inactif</span>`;
+    }
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      return new Date(iso).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
+    }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    loadProfile().catch(() => logout());
+  </script>
+</body>
+</html>

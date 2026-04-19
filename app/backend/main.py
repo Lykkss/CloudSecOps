@@ -1,5 +1,8 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from core.database import Base, engine
 from routers import auth, health, users
@@ -7,16 +10,49 @@ from routers import auth, health, users
 # Création des tables au démarrage (remplacer par Alembic en prod)
 Base.metadata.create_all(bind=engine)
 
+_DESCRIPTION = """
+## CloudSecOps — API de gestion sécurisée
+
+Architecture **Zero Trust** avec authentification JWT et contrôle d'accès RBAC.
+
+### Flux d'authentification
+1. `POST /auth/login` → obtenir un `access_token`
+2. Cliquer **Authorize** (🔒) en haut à droite, saisir `Bearer <token>`
+3. Appeler les endpoints protégés
+
+### Rôles
+| Rôle  | Permissions |
+|-------|-------------|
+| `admin` | Lecture + création + suppression d'utilisateurs, accès logs |
+| `user`  | Lecture de son propre profil uniquement |
+
+### Sécurité
+- Mots de passe hashés **bcrypt** (coût 12)
+- Tokens **JWT HS256** — expiration configurable via `ACCESS_TOKEN_EXPIRE_MINUTES`
+- Logs d'audit sur chaque action sensible
+"""
+
+_TAGS = [
+    {"name": "auth",   "description": "Authentification — obtenir et valider un JWT"},
+    {"name": "users",  "description": "Gestion des comptes utilisateurs (RBAC)"},
+    {"name": "health", "description": "Vérification de l'état du service"},
+]
+
 app = FastAPI(
     title="CloudSecOps API",
-    description="Backend sécurisé — JWT, RBAC, PostgreSQL",
+    description=_DESCRIPTION,
     version="1.0.0",
-    docs_url="/docs" if True else None,  # Désactiver en prod
+    openapi_tags=_TAGS,
+    contact={"name": "CloudSecOps", "email": "admin@cloudsecops.dev"},
+    license_info={"name": "MIT"},
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://localhost"],
+    allow_origins=[
+        "http://localhost:8000",
+        "http://127.0.0.1:8000",
+    ],
     allow_methods=["GET", "POST", "DELETE"],
     allow_headers=["Authorization", "Content-Type"],
 )
@@ -24,3 +60,8 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(auth.router)
 app.include_router(users.router)
+
+# Interface web (servie sous /ui)
+_FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
+if os.path.isdir(_FRONTEND_DIR):
+    app.mount("/ui", StaticFiles(directory=_FRONTEND_DIR, html=True), name="frontend")

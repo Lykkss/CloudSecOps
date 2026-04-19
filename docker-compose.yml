@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: cloudsecops-db
+    environment:
+      POSTGRES_DB: cloudsecops
+      POSTGRES_USER: cloudsecops
+      POSTGRES_PASSWORD: changeme-local-dev
+    ports:
+      - "5433:5432"  # 5432 occupé par un autre projet
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cloudsecops"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./app/backend
+      dockerfile: Dockerfile
+    container_name: cloudsecops-backend
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://cloudsecops:changeme-local-dev@db:5432/cloudsecops
+      SECRET_KEY: changeme-local-dev-secret-key-32chars
+      APP_ENV: development
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

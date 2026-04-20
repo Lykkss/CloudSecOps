@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div><div class="logo-sub">Rapport d'investigation forensique</div></div>
+  <div class="doc-ref">Réf. CSO-INC-{{ incident.id_incident }}<br>{{ incident.created_at[:10] }}</div>
+</div>
+
+<h1>{{ incident.title }}</h1>
+<div class="meta-box">
+  <div><div class="k">Type</div><div class="v">{{ incident.type }}</div></div>
+  <div><div class="k">Sévérité</div><div class="v"><span class="pill pill-{{ incident.severity }}">{{ incident.severity|upper }}</span></div></div>
+  <div><div class="k">Statut</div><div class="v"><span class="pill pill-{{ incident.status }}">{{ incident.status }}</span></div></div>
+  <div><div class="k">Ressource affectée</div><div class="v">{{ incident.affected_resource or '—' }}</div></div>
+  <div><div class="k">Date de détection</div><div class="v">{{ incident.created_at[:19]|replace('T', ' ') }}</div></div>
+</div>
+
+<h2>Description</h2>
+<p>{{ incident.description or '—' }}</p>
+
+{% if incident.timeline %}
+<h2>Chronologie de l'incident</h2>
+<table>
+  <thead><tr><th style="width:160px">Horodatage</th><th>Événement</th><th>Détail</th></tr></thead>
+  <tbody>
+  {% for e in incident.timeline %}
+    <tr>
+      <td><code>{{ e.ts[:19]|replace('T',' ') }}</code></td>
+      <td><strong>{{ e.event }}</strong></td>
+      <td style="font-size:8.5pt">{{ e.detail or '—' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if incident.ioc %}
+<h2>Indicateurs de compromission (IOC)</h2>
+<table>
+  <thead><tr><th>Type</th><th>Valeur</th><th>Contexte</th></tr></thead>
+  <tbody>
+  {% for i in incident.ioc %}
+    <tr>
+      <td><strong>{{ i.type }}</strong></td>
+      <td><code>{{ i.value }}</code></td>
+      <td style="font-size:8.5pt">{{ i.context or '—' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Chemin d'attaque (Kill Chain)</h2>
+{% set mitre_steps = [
+  {"num": 1, "title": "Reconnaissance", "tech": "Scan GitHub pour clés exposées", "mitre": "T1588.001"},
+  {"num": 2, "title": "Initial Access", "tech": "Utilisation de la clé IAM volée", "mitre": "T1078.004"},
+  {"num": 3, "title": "Discovery", "tech": "Énumération IAM (ListUsers, ListRoles)", "mitre": "T1069.003"},
+  {"num": 4, "title": "Privilege Escalation", "tech": "AttachUserPolicy → AdministratorAccess", "mitre": "T1098.001"},
+  {"num": 5, "title": "Defense Evasion", "tech": "StopLogging CloudTrail", "mitre": "T1562.008"},
+  {"num": 6, "title": "Exfiltration", "tech": "GetObject S3 en masse", "mitre": "T1537"},
+  {"num": 7, "title": "Persistence", "tech": "Création utilisateur backdoor + AccessKey", "mitre": "T1136.003"}
+] %}
+{% for step in mitre_steps %}
+<div class="attack-step">
+  <div class="step-num">{{ step.num }}</div>
+  <div class="step-body">
+    <div class="step-title">{{ step.title }}</div>
+    <div class="step-tech">{{ step.tech }}</div>
+    <div class="step-mitre">MITRE ATT&CK : {{ step.mitre }}</div>
+  </div>
+</div>
+{% if not loop.last %}<div class="step-arrow">↓</div>{% endif %}
+{% endfor %}
+{% endif %}
+
+<div class="page-break"></div>
+<h2>Références</h2>
+<p>MITRE ATT&CK Cloud · NIST SP 800-61r2 · ISO/IEC 27035 · CIS AWS Foundations Benchmark v1.5</p>
+{% endblock %}

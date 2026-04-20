@@ -70,6 +70,81 @@ CREATE TABLE IF NOT EXISTS incident (
     id_user           INTEGER REFERENCES user_account(id_user)
 );
 
+CREATE TABLE IF NOT EXISTS mobile_scan (
+    id_scan          SERIAL PRIMARY KEY,
+    scanned_at       TIMESTAMPTZ DEFAULT NOW(),
+    app_name         VARCHAR(255),
+    package_name     VARCHAR(255),
+    version          VARCHAR(50),
+    platform         VARCHAR(20) DEFAULT 'android',
+    file_name        VARCHAR(255),
+    mobsf_hash       VARCHAR(64),
+    security_score   INTEGER,
+    critical_count   INTEGER DEFAULT 0,
+    high_count       INTEGER DEFAULT 0,
+    warning_count    INTEGER DEFAULT 0,
+    info_count       INTEGER DEFAULT 0,
+    status           VARCHAR(20) DEFAULT 'pending',
+    raw_json         TEXT,
+    dangerous_perms  TEXT,
+    trackers         TEXT
+);
+
+CREATE TABLE IF NOT EXISTS ebios_project (
+    id_project  SERIAL PRIMARY KEY,
+    created_at  TIMESTAMPTZ DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ,
+    name        VARCHAR(255) NOT NULL,
+    scope       TEXT,
+    context     TEXT,
+    status      VARCHAR(20) DEFAULT 'in_progress',
+    id_author   INTEGER REFERENCES user_account(id_user)
+);
+
+CREATE TABLE IF NOT EXISTS ebios_asset (
+    id_asset       SERIAL PRIMARY KEY,
+    id_project     INTEGER NOT NULL REFERENCES ebios_project(id_project),
+    name           VARCHAR(255) NOT NULL,
+    type           VARCHAR(50),
+    description    TEXT,
+    critical_level INTEGER DEFAULT 2
+);
+
+CREATE TABLE IF NOT EXISTS ebios_fear_event (
+    id_event    SERIAL PRIMARY KEY,
+    id_project  INTEGER NOT NULL REFERENCES ebios_project(id_project),
+    id_asset    INTEGER REFERENCES ebios_asset(id_asset),
+    impact      VARCHAR(100),
+    description TEXT,
+    gravity     INTEGER DEFAULT 2
+);
+
+CREATE TABLE IF NOT EXISTS ebios_risk_source (
+    id_source   SERIAL PRIMARY KEY,
+    id_project  INTEGER NOT NULL REFERENCES ebios_project(id_project),
+    name        VARCHAR(255) NOT NULL,
+    category    VARCHAR(50),
+    motivation  TEXT,
+    resources   VARCHAR(100),
+    pertinence  INTEGER DEFAULT 2
+);
+
+CREATE TABLE IF NOT EXISTS ebios_scenario (
+    id_scenario      SERIAL PRIMARY KEY,
+    id_project       INTEGER NOT NULL REFERENCES ebios_project(id_project),
+    id_risk_source   INTEGER REFERENCES ebios_risk_source(id_source),
+    id_fear_event    INTEGER REFERENCES ebios_fear_event(id_event),
+    type             VARCHAR(20) DEFAULT 'strategic',
+    title            VARCHAR(255) NOT NULL,
+    description      TEXT,
+    attack_path      TEXT,
+    likelihood       INTEGER DEFAULT 2,
+    gravity          INTEGER DEFAULT 2,
+    risk_level       INTEGER DEFAULT 4,
+    treatment        VARCHAR(20) DEFAULT 'reduce',
+    measures         TEXT
+);
+
 CREATE TABLE IF NOT EXISTS forensic_report (
     id_report         SERIAL PRIMARY KEY,
     created_at        TIMESTAMPTZ DEFAULT NOW(),

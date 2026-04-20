@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div><div class="logo-sub">Rapport de scan de vulnérabilités</div></div>
+  <div class="doc-ref">Réf. CSO-SCAN-{{ scan.id_scan }}<br>{{ scan.scanned_at[:10] }}</div>
+</div>
+
+<h1>Rapport Trivy — {{ scan.image_name }}:{{ scan.image_tag }}</h1>
+
+<div class="meta-box">
+  <div><div class="k">Image</div><div class="v">{{ scan.image_name }}:{{ scan.image_tag }}</div></div>
+  <div><div class="k">Statut</div><div class="v"><span class="pill pill-{{ scan.status }}">{{ scan.status|upper }}</span></div></div>
+  <div><div class="k">Git SHA</div><div class="v"><code>{{ scan.git_sha or '—' }}</code></div></div>
+  <div><div class="k">Date</div><div class="v">{{ scan.scanned_at[:19]|replace('T', ' ') }}</div></div>
+  <div><div class="k">Déclencheur</div><div class="v">{{ scan.triggered_by }}</div></div>
+  <div><div class="k">Total CVE</div><div class="v">{{ vulnerabilities|length }}</div></div>
+</div>
+
+<h2>Résumé des vulnérabilités</h2>
+<table>
+  <thead><tr><th>Sévérité</th><th>Nombre</th><th>Ratio</th></tr></thead>
+  <tbody>
+    <tr><td><span class="pill pill-critical">CRITICAL</span></td><td>{{ scan.critical_count }}</td>
+        <td>{% if vulnerabilities|length > 0 %}{{ "%.0f"|format(scan.critical_count / vulnerabilities|length * 100) }}%{% else %}—{% endif %}</td></tr>
+    <tr><td><span class="pill pill-high">HIGH</span></td><td>{{ scan.high_count }}</td>
+        <td>{% if vulnerabilities|length > 0 %}{{ "%.0f"|format(scan.high_count / vulnerabilities|length * 100) }}%{% else %}—{% endif %}</td></tr>
+    <tr><td><span class="pill pill-medium">MEDIUM</span></td><td>{{ scan.medium_count }}</td>
+        <td>{% if vulnerabilities|length > 0 %}{{ "%.0f"|format(scan.medium_count / vulnerabilities|length * 100) }}%{% else %}—{% endif %}</td></tr>
+    <tr><td><span class="pill pill-low">LOW</span></td><td>{{ scan.low_count }}</td>
+        <td>{% if vulnerabilities|length > 0 %}{{ "%.0f"|format(scan.low_count / vulnerabilities|length * 100) }}%{% else %}—{% endif %}</td></tr>
+  </tbody>
+</table>
+
+{% if not vulnerabilities %}
+<div class="info-box">✅ Aucune vulnérabilité détectée — image conforme aux exigences de sécurité.</div>
+{% else %}
+
+{% if scan.critical_count > 0 or scan.high_count > 0 %}
+<div class="warning-box">⚠️ <strong>Action requise :</strong> {{ scan.critical_count }} vulnérabilité(s) CRITICAL et {{ scan.high_count }} HIGH détectées. Mise à jour des paquets recommandée avant déploiement.</div>
+{% endif %}
+
+<h2>Détail des vulnérabilités</h2>
+<table>
+  <thead><tr><th>CVE</th><th>Package</th><th>Installé</th><th>Corrigé en</th><th>Sévérité</th><th>Titre</th></tr></thead>
+  <tbody>
+  {% for v in vulnerabilities %}
+    <tr>
+      <td><code>{{ v.id }}</code></td>
+      <td>{{ v.package }}</td>
+      <td><code>{{ v.installed_version }}</code></td>
+      <td>{% if v.fixed_version %}<code>{{ v.fixed_version }}</code>{% else %}—{% endif %}</td>
+      <td><span class="pill pill-{{ v.severity|lower }}">{{ v.severity }}</span></td>
+      <td style="font-size:8.5pt">{{ v.title or '—' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Recommandations</h2>
+<table>
+  <thead><tr><th>Priorité</th><th>Action</th></tr></thead>
+  <tbody>
+    <tr><td>Immédiat</td><td>Mettre à jour les paquets avec des correctifs disponibles (colonne "Corrigé en")</td></tr>
+    <tr><td>Court terme</td><td>Configurer Trivy dans la CI avec exit-code 1 pour bloquer les CRITICAL</td></tr>
+    <tr><td>Long terme</td><td>Adopter une image distroless ou scratch pour réduire la surface d'attaque</td></tr>
+  </tbody>
+</table>
+{% endblock %}

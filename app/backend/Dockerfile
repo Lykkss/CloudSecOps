@@ -2,6 +2,13 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
+# Dépendances système pour WeasyPrint (rendu PDF) et outils réseau
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libcairo2 libpango-1.0-0 libpangocairo-1.0-0 \
+    libgdk-pixbuf-2.0-0 libffi-dev shared-mime-info \
+    curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copie des dépendances en premier (cache Docker)
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -12,8 +19,11 @@ COPY backend/ .
 # Copie du frontend (servi comme fichiers statiques via /ui)
 COPY frontend/ ../frontend/
 
-# Utilisateur non-root (OWASP — pas de root dans le conteneur)
-RUN useradd -m appuser && chown -R appuser:appuser /app /frontend 2>/dev/null || true
+# Répertoire pour les uploads APK temporaires
+RUN mkdir -p /app/uploads
+
+# Utilisateur non-root (OWASP)
+RUN useradd -m appuser && chown -R appuser:appuser /app /frontend /app/uploads 2>/dev/null || true
 USER appuser
 
 EXPOSE 8000

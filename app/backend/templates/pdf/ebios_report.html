@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div><div class="logo-sub">Analyse des risques EBIOS Risk Manager</div></div>
+  <div class="doc-ref">Réf. CSO-EBIOS-{{ project.id_project }}<br>{{ project.created_at[:10] }}</div>
+</div>
+
+<h1>{{ project.name }}</h1>
+<div class="meta-box">
+  <div><div class="k">Périmètre</div><div class="v">{{ project.scope or '—' }}</div></div>
+  <div><div class="k">Statut</div><div class="v">{{ project.status }}</div></div>
+  <div><div class="k">Date</div><div class="v">{{ project.created_at[:10] }}</div></div>
+  <div><div class="k">Scénarios</div><div class="v">{{ scenarios|length }}</div></div>
+</div>
+
+{% if project.context %}
+<h2>Contexte</h2><p>{{ project.context }}</p>
+{% endif %}
+
+{% if assets %}
+<h2>Atelier 1 — Valeurs métier et biens essentiels</h2>
+<table>
+  <thead><tr><th>Actif</th><th>Type</th><th>Criticité</th><th>Description</th></tr></thead>
+  <tbody>
+  {% for a in assets %}
+  <tr>
+    <td><strong>{{ a.name }}</strong></td>
+    <td>{{ a.type or '—' }}</td>
+    <td>{% set lvl = a.critical_level %}
+        <span class="pill pill-{{ 'critical' if lvl == 4 else 'high' if lvl == 3 else 'medium' if lvl == 2 else 'low' }}">{{ lvl }}/4</span></td>
+    <td style="font-size:8.5pt">{{ a.description or '—' }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if fear_events %}
+<h2>Atelier 1 — Événements redoutés</h2>
+<table>
+  <thead><tr><th>Impact</th><th>Description</th><th>Gravité</th></tr></thead>
+  <tbody>
+  {% for e in fear_events %}
+  <tr>
+    <td>{{ e.impact or '—' }}</td>
+    <td>{{ e.description or '—' }}</td>
+    <td><span class="pill pill-{{ 'critical' if e.gravity == 4 else 'high' if e.gravity == 3 else 'medium' if e.gravity == 2 else 'low' }}">{{ e.gravity }}/4</span></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if risk_sources %}
+<h2>Atelier 2 — Sources de risque</h2>
+<table>
+  <thead><tr><th>Source</th><th>Catégorie</th><th>Motivation</th><th>Ressources</th><th>Pertinence</th></tr></thead>
+  <tbody>
+  {% for s in risk_sources %}
+  <tr>
+    <td><strong>{{ s.name }}</strong></td>
+    <td>{{ s.category or '—' }}</td>
+    <td style="font-size:8.5pt">{{ s.motivation or '—' }}</td>
+    <td>{{ s.resources or '—' }}</td>
+    <td><span class="pill pill-{{ 'critical' if s.pertinence == 4 else 'high' if s.pertinence == 3 else 'medium' if s.pertinence == 2 else 'low' }}">{{ s.pertinence }}/4</span></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if scenarios %}
+<div class="page-break"></div>
+<h2>Ateliers 3 & 4 — Scénarios de risque</h2>
+
+{% set strategic = scenarios|selectattr("type","equalto","strategic")|list %}
+{% set operational = scenarios|selectattr("type","equalto","operational")|list %}
+
+{% if strategic %}
+<h3>Scénarios stratégiques</h3>
+{% for sc in strategic %}
+<div style="margin-bottom:16px;padding:10px;border:1px solid #ddd;border-radius:6px;border-left:4px solid {{ '#c0392b' if sc.risk_level >= 12 else '#d68910' if sc.risk_level >= 6 else '#1e8449' }}">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <strong>{{ sc.title }}</strong>
+    <span class="pill pill-{{ 'critical' if sc.risk_level >= 12 else 'high' if sc.risk_level >= 6 else 'low' }}">Risque {{ sc.risk_level }}/16</span>
+  </div>
+  <div style="font-size:9pt;color:#666;margin-top:4px">
+    Vraisemblance {{ sc.likelihood }}/4 × Gravité {{ sc.gravity }}/4
+    &nbsp;|&nbsp; Traitement : <strong>{{ sc.treatment or '—' }}</strong>
+  </div>
+  {% if sc.description %}<p style="font-size:9.5pt;margin-top:6px">{{ sc.description }}</p>{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if operational %}
+<h3>Scénarios opérationnels — Chemins d'attaque</h3>
+{% for sc in operational %}
+<div style="margin-bottom:20px">
+  <div style="font-weight:700;font-size:11pt;margin-bottom:8px">{{ sc.title }}</div>
+  {% if sc.attack_path %}
+  {% for step in sc.attack_path %}
+  <div class="attack-step">
+    <div class="step-num">{{ loop.index }}</div>
+    <div class="step-body">
+      <div class="step-title">{{ step.step or step }}</div>
+      {% if step.technique %}<div class="step-tech">{{ step.technique }}</div>{% endif %}
+      {% if step.mitreId %}<div class="step-mitre">MITRE ATT&CK : {{ step.mitreId }}</div>{% endif %}
+    </div>
+  </div>
+  {% if not loop.last %}<div class="step-arrow">↓</div>{% endif %}
+  {% endfor %}
+  {% endif %}
+  {% if sc.measures %}
+  <div class="info-box" style="margin-top:8px">
+    <strong>Mesures de sécurité :</strong>
+    {% for m in sc.measures %}<div>• {{ m }}</div>{% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+{% endif %}
+
+<h2>Matrice des risques</h2>
+<table>
+  <thead><tr><th>Scénario</th><th>Vraisemblance</th><th>Gravité</th><th>Niveau</th><th>Traitement</th></tr></thead>
+  <tbody>
+  {% for sc in scenarios %}
+  <tr>
+    <td>{{ sc.title }}</td>
+    <td style="text-align:center">{{ sc.likelihood }}/4</td>
+    <td style="text-align:center">{{ sc.gravity }}/4</td>
+    <td><span class="pill pill-{{ 'critical' if sc.risk_level >= 12 else 'high' if sc.risk_level >= 6 else 'medium' if sc.risk_level >= 3 else 'low' }}">{{ sc.risk_level }}/16</span></td>
+    <td>{{ sc.treatment or '—' }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>Références</h2>
+<p>EBIOS Risk Manager — ANSSI 2018 · ISO/IEC 27005:2022 · ISO/IEC 27001:2022</p>
+{% endblock %}

@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from core.database import Base, engine
-from routers import auth, health, incidents, reports, scans, users
+from routers import ai, auth, ebios, export, health, incidents, logs, mobile_scans, reports, scans, users
 
 # Création des tables au démarrage (remplacer par Alembic en prod)
 Base.metadata.create_all(bind=engine)
@@ -38,6 +38,11 @@ _TAGS = [
     {"name": "scans",     "description": "Résultats de scans de vulnérabilités (Trivy)"},
     {"name": "incidents", "description": "Incidents de sécurité et simulations (IAM compromise…)"},
     {"name": "reports",   "description": "Rapports d'investigation forensique"},
+    {"name": "mobile",    "description": "Analyse de sécurité mobile (MobSF / APK)"},
+    {"name": "ebios",     "description": "Analyse des risques EBIOS Risk Manager"},
+    {"name": "ai",        "description": "Assistant IA local (Ollama)"},
+    {"name": "logs",      "description": "Logs CloudWatch / AWS"},
+    {"name": "export",    "description": "Export PDF des rapports"},
     {"name": "health",    "description": "Vérification de l'état du service"},
 ]
 
@@ -66,6 +71,11 @@ app.include_router(users.router)
 app.include_router(scans.router)
 app.include_router(incidents.router)
 app.include_router(reports.router)
+app.include_router(mobile_scans.router)
+app.include_router(ebios.router)
+app.include_router(ai.router)
+app.include_router(logs.router)
+app.include_router(export.router)
 
 # Interface web (servie sous /ui)
 _FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")

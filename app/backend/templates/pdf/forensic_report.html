@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div><div class="logo-sub">Rapport forensique</div></div>
+  <div class="doc-ref">Réf. CSO-FOR-{{ report.id_report }}<br>{{ report.created_at[:10] }}</div>
+</div>
+
+<h1>{{ report.title }}</h1>
+<div class="meta-box">
+  <div><div class="k">Statut</div><div class="v"><span class="pill pill-{{ report.status }}">{{ report.status|upper }}</span></div></div>
+  <div><div class="k">Incident lié</div><div class="v">{% if report.id_incident %}#{{ report.id_incident }}{% else %}—{% endif %}</div></div>
+  <div><div class="k">Date</div><div class="v">{{ report.created_at[:10] }}</div></div>
+  <div><div class="k">Auteur (ID)</div><div class="v">{{ report.id_author or '—' }}</div></div>
+</div>
+
+<h2>Résumé exécutif</h2>
+<p>{{ report.executive_summary }}</p>
+
+{% if report.findings %}
+<h2>Constatations</h2>
+{% for f in report.findings %}
+<h3><span class="pill pill-{{ f.severity|lower }}">{{ f.severity }}</span> — {{ f.title }}</h3>
+<p>{{ f.description }}</p>
+{% if f.evidence %}<p><strong>Preuve :</strong> <code>{{ f.evidence }}</code></p>{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if report.recommendations %}
+<h2>Recommandations</h2>
+<table>
+  <thead><tr><th>Priorité</th><th>Action</th><th>Responsable</th></tr></thead>
+  <tbody>
+  {% for r in report.recommendations %}
+    <tr>
+      <td>{% if r.priority == 'immediate' %}<span class="pill pill-critical">Immédiat</span>
+          {% elif r.priority == 'short_term' %}<span class="pill pill-high">Court terme</span>
+          {% else %}<span class="pill pill-low">Long terme</span>{% endif %}</td>
+      <td>{{ r.action }}</td>
+      <td>{{ r.owner or '—' }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}

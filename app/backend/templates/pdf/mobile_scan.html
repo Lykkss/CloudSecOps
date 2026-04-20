@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div><div class="logo-sub">Rapport d'analyse mobile (MobSF)</div></div>
+  <div class="doc-ref">Réf. CSO-MOB-{{ scan.id_scan }}<br>{{ scan.scanned_at[:10] }}</div>
+</div>
+
+<h1>{{ scan.app_name or scan.file_name }}</h1>
+<div class="meta-box">
+  <div><div class="k">Package</div><div class="v"><code>{{ scan.package_name or '—' }}</code></div></div>
+  <div><div class="k">Version</div><div class="v">{{ scan.version or '—' }}</div></div>
+  <div><div class="k">Plateforme</div><div class="v">{{ scan.platform|upper }}</div></div>
+  <div><div class="k">Statut</div><div class="v"><span class="pill pill-{{ scan.status }}">{{ scan.status }}</span></div></div>
+  <div><div class="k">Date d'analyse</div><div class="v">{{ scan.scanned_at[:19]|replace('T', ' ') }}</div></div>
+  {% if scan.security_score is not none %}
+  <div><div class="k">Score de sécurité</div><div class="v">{{ scan.security_score }}/100</div></div>
+  {% endif %}
+</div>
+
+{% if scan.security_score is not none %}
+<h2>Score de sécurité global</h2>
+{% set score = scan.security_score %}
+{% set color = '#c0392b' if score < 40 else '#d68910' if score < 70 else '#1e8449' %}
+<div style="margin: 10px 0 20px">
+  <div style="font-size:24pt;font-weight:700;color:{{ color }}">{{ score }}/100</div>
+  <div class="score-bar" style="width:300px">
+    <div class="score-fill" style="width:{{ score }}%;background:{{ color }}"></div>
+  </div>
+  <div style="font-size:9pt;color:#666;margin-top:4px">
+    {% if score < 40 %}Risque élevé — corrections urgentes requises
+    {% elif score < 70 %}Risque modéré — améliorations recommandées
+    {% else %}Risque faible — bonne posture de sécurité{% endif %}
+  </div>
+</div>
+{% endif %}
+
+<h2>Résumé des vulnérabilités</h2>
+<table>
+  <thead><tr><th>Sévérité</th><th>Nombre</th></tr></thead>
+  <tbody>
+    <tr><td><span class="pill pill-critical">CRITICAL</span></td><td>{{ scan.critical_count }}</td></tr>
+    <tr><td><span class="pill pill-high">HIGH</span></td><td>{{ scan.high_count }}</td></tr>
+    <tr><td><span class="pill pill-medium">WARNING</span></td><td>{{ scan.warning_count }}</td></tr>
+    <tr><td><span class="pill pill-low">INFO</span></td><td>{{ scan.info_count }}</td></tr>
+  </tbody>
+</table>
+
+{% if scan.dangerous_perms %}
+<h2>Permissions dangereuses</h2>
+{% for p in scan.dangerous_perms %}
+<div style="margin-bottom:8px;padding:6px 10px;background:#fff3e0;border-radius:4px;font-size:9.5pt">
+  <strong><code>{{ p.permission }}</code></strong>
+  {% if p.description %}<br><span style="color:#666">{{ p.description }}</span>{% endif %}
+  {% if p.status %}&nbsp;<span class="pill pill-{{ 'critical' if p.status == 'dangerous' else 'medium' }}">{{ p.status }}</span>{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+
+{% if scan.trackers %}
+<h2>Trackers détectés</h2>
+<div class="warning-box">⚠️ {{ scan.trackers|length }} tracker(s) identifié(s) dans l'application — risques pour la vie privée des utilisateurs.</div>
+<table>
+  <thead><tr><th>Tracker</th><th>Catégorie</th><th>URL</th></tr></thead>
+  <tbody>
+  {% for t in scan.trackers %}
+  <tr>
+    <td><strong>{{ t.name or t }}</strong></td>
+    <td>{{ t.categories|join(', ') if t.categories else '—' }}</td>
+    <td style="font-size:8pt"><code>{{ t.url or '—' }}</code></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h2>Recommandations</h2>
+<table>
+  <thead><tr><th>Priorité</th><th>Action</th></tr></thead>
+  <tbody>
+    {% if scan.critical_count > 0 %}
+    <tr><td><span class="pill pill-critical">Immédiat</span></td><td>Corriger les {{ scan.critical_count }} vulnérabilité(s) CRITICAL avant publication</td></tr>
+    {% endif %}
+    {% if scan.dangerous_perms %}
+    <tr><td><span class="pill pill-high">Court terme</span></td><td>Revoir et supprimer les permissions inutiles</td></tr>
+    {% endif %}
+    {% if scan.trackers %}
+    <tr><td><span class="pill pill-medium">Moyen terme</span></td><td>Documenter ou supprimer les trackers — conformité RGPD</td></tr>
+    {% endif %}
+    <tr><td><span class="pill pill-low">Long terme</span></td><td>Intégrer MobSF dans la CI/CD mobile</td></tr>
+  </tbody>
+</table>
+{% endblock %}

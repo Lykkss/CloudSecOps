@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: cloudsecops
       POSTGRES_PASSWORD: changeme-local-dev
     ports:
-      - "5433:5432"  # 5432 occupé par un autre projet
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -29,9 +29,65 @@ services:
       SECRET_KEY: changeme-local-dev-secret-key-32chars
       APP_ENV: development
       CI_API_KEY: changeme-ci-api-key
+      MOBSF_URL: http://mobsf:8000
+      MOBSF_API_KEY: changeme-mobsf-api-key
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AWS_REGION: eu-west-3
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+    volumes:
+      - apk_uploads:/app/uploads
     depends_on:
       db:
         condition: service_healthy
 
+  # ── Mobile Security Framework ────────────────────────────────────────────
+  mobsf:
+    image: opensecurity/mobile-security-framework-mobsf:latest
+    container_name: cloudsecops-mobsf
+    ports:
+      - "8008:8000"
+    environment:
+      MOBSF_API_KEY: changeme-mobsf-api-key
+    volumes:
+      - mobsf_data:/home/mobsf/.MobSF
+    restart: unless-stopped
+
+  # ── Ollama (IA locale) ───────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cloudsecops-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    # Pour GPU NVIDIA : décommenter les lignes ci-dessous
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+  # ── LocalStack (simulation AWS) ──────────────────────────────────────────
+  localstack:
+    image: localstack/localstack:3.4
+    container_name: localstack-cloudsecops
+    ports:
+      - "4566:4566"
+    environment:
+      SERVICES: ec2,s3,iam,sts,cloudtrail,cloudwatch,logs,rds
+      DEBUG: 0
+    volumes:
+      - localstack_data:/var/lib/localstack
+
 volumes:
   postgres_data:
+  mobsf_data:
+  ollama_data:
+  apk_uploads:
+  localstack_data:

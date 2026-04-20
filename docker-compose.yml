@@ -28,6 +28,7 @@ services:
       DATABASE_URL: postgresql://cloudsecops:changeme-local-dev@db:5432/cloudsecops
       SECRET_KEY: changeme-local-dev-secret-key-32chars
       APP_ENV: development
+      CI_API_KEY: changeme-ci-api-key
     depends_on:
       db:
         condition: service_healthy

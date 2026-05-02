@@ -55,7 +55,7 @@ jobs:
             app/
 
       - name: Run Trivy — table (logs CI)
-        uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: "${{ env.IMAGE_NAME }}:${{ github.sha }}"
           format: table
@@ -64,7 +64,7 @@ jobs:
           severity: CRITICAL,HIGH,MEDIUM
 
       - name: Run Trivy — JSON output
-        uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: "${{ env.IMAGE_NAME }}:${{ github.sha }}"
           format: json
@@ -74,7 +74,7 @@ jobs:
 
       - name: Run Trivy — SARIF (GitHub Security tab)
         if: always()
-        uses: aquasecurity/trivy-action@0.30.0
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: "${{ env.IMAGE_NAME }}:${{ github.sha }}"
           format: sarif

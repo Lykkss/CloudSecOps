@@ -10,7 +10,7 @@
 # Trust policy : seul le service EC2 peut assumer ce rôle (pas un utilisateur humain)
 resource "aws_iam_role" "ec2_role" {
   name        = "${var.project_name}-ec2-role"
-  description = "Rôle IAM pour l'instance EC2 backend — moindre privilège"
+  description = "Role IAM pour EC2 backend - moindre privilege"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -35,7 +35,7 @@ resource "aws_iam_role" "ec2_role" {
 # Interdit : toute action admin, IAM, création de ressources
 resource "aws_iam_policy" "ec2_policy" {
   name        = "${var.project_name}-ec2-policy"
-  description = "Policy moindre privilège pour l'EC2 backend"
+  description = "Policy moindre privilege pour EC2 backend"
 
   policy = jsonencode({
     Version = "2012-10-17"

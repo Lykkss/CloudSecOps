@@ -27,3 +27,4 @@ variable "admin_cidr" {
   type        = string
   default     = "0.0.0.0/0"  # A restreindre en prod à votre IP : "X.X.X.X/32"
 }
+

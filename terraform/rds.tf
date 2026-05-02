@@ -32,7 +32,7 @@ variable "db_password" {
 resource "aws_db_subnet_group" "main" {
   count = var.localstack_enabled ? 0 : 1
   name        = "${var.project_name}-db-subnet-group"
-  description = "Subnet group RDS — subnet privé uniquement"
+  description = "Subnet group RDS - subnet prive uniquement"
   subnet_ids  = [aws_subnet.private.id, aws_subnet.public.id]
   # Note : 2 subnets requis par AWS. En prod, utiliser 2 subnets PRIVÉS.
   # Ici le subnet public est ajouté uniquement pour satisfaire la contrainte
@@ -69,7 +69,7 @@ resource "aws_db_instance" "postgres" {
   storage_encrypted = !var.localstack_enabled # Désactivé en LocalStack (non supporté)
 
   # Sauvegarde automatique (RPO = 1 jour)
-  backup_retention_period = 7     # 7 jours de sauvegardes
+  backup_retention_period = 0     # 7 jours de sauvegardes
   backup_window           = "03:00-04:00" # Fenêtre de backup en UTC
 
   # Maintenance

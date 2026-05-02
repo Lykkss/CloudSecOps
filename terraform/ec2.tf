@@ -9,7 +9,7 @@
 variable "ec2_ami" {
   description = "AMI ID pour l'instance EC2 (Amazon Linux 2023 en prod)"
   type        = string
-  default     = "ami-00000000000000001" # Valeur fictive pour LocalStack
+  default     = "ami-0302f42a44bf53a45"
 }
 
 variable "ec2_instance_type" {
@@ -21,7 +21,7 @@ variable "ec2_instance_type" {
 variable "ec2_key_name" {
   description = "Nom de la clé SSH (laisser vide si pas d'accès SSH nécessaire)"
   type        = string
-  default     = ""
+  default     = "cloud-secops-key"
 }
 
 # EC2 non déployée en LocalStack Community (AMI lookup non supporté)

@@ -10,12 +10,12 @@
 # Interdit  : HTTP (80) non chiffré, accès 0.0.0.0/0 sur SSH
 resource "aws_security_group" "ec2" {
   name        = "${var.project_name}-sg-ec2"
-  description = "Security Group pour l'instance EC2 backend"
+  description = "Security Group for EC2 backend"
   vpc_id      = aws_vpc.main.id
 
   # HTTPS entrant depuis Internet (API publique)
   ingress {
-    description = "HTTPS depuis Internet"
+    description = "HTTPS from Internet"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -24,7 +24,7 @@ resource "aws_security_group" "ec2" {
 
   # SSH restreint à l'IP admin uniquement (à restreindre en prod avec var.admin_cidr)
   ingress {
-    description = "SSH admin"
+    description = "SSH admin access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -33,7 +33,7 @@ resource "aws_security_group" "ec2" {
 
   # HTTP entrant — accepté uniquement pour redirection vers HTTPS
   ingress {
-    description = "HTTP (redirection vers HTTPS)"
+    description = "HTTP redirect to HTTPS"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
@@ -42,7 +42,7 @@ resource "aws_security_group" "ec2" {
 
   # Tout le trafic sortant est autorisé (l'EC2 doit pouvoir contacter les services AWS)
   egress {
-    description = "Tout le trafic sortant"
+    description = "All outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -61,12 +61,12 @@ resource "aws_security_group" "ec2" {
 # Interdit  : tout accès depuis Internet, tout accès depuis d'autres sources
 resource "aws_security_group" "rds" {
   name        = "${var.project_name}-sg-rds"
-  description = "Security Group pour RDS PostgreSQL — accès EC2 uniquement"
+  description = "Security Group for RDS PostgreSQL - EC2 access only"
   vpc_id      = aws_vpc.main.id
 
   # PostgreSQL uniquement depuis l'EC2 (référence au SG EC2, pas à un CIDR)
   ingress {
-    description     = "PostgreSQL depuis EC2 uniquement"
+    description = "PostgreSQL from EC2 only"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
@@ -75,7 +75,7 @@ resource "aws_security_group" "rds" {
 
   # Sortant : uniquement vers le VPC (RDS ne contacte pas Internet)
   egress {
-    description = "Trafic sortant interne VPC"
+    description = "Internal VPC outbound traffic"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"

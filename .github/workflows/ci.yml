@@ -35,7 +35,9 @@ jobs:
           DATABASE_URL: sqlite:///./test.db
           SECRET_KEY: test-secret-key-not-used-in-prod-32c
           APP_ENV: test
-        run: pytest tests/ -v --tb=short
+        run: |
+          cd app/backend
+          PYTHONPATH=. pytest tests/ -v --tb=short
 
   # ── Job 2 : Build Docker + Trivy scan ────────────────────────────────────
   trivy-scan:

@@ -66,7 +66,7 @@ resource "aws_security_group" "rds" {
 
   # PostgreSQL uniquement depuis l'EC2 (référence au SG EC2, pas à un CIDR)
   ingress {
-    description = "PostgreSQL from EC2 only"
+    description     = "PostgreSQL from EC2 only"
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"

@@ -27,7 +27,7 @@ variable "ec2_key_name" {
 # EC2 non déployée en LocalStack Community (AMI lookup non supporté)
 # Le code est prêt pour le vrai AWS Free Tier (terraform apply sans localstack_enabled)
 resource "aws_instance" "backend" {
-  count = var.localstack_enabled ? 0 : 1
+  count                  = var.localstack_enabled ? 0 : 1
   ami                    = var.ec2_ami
   instance_type          = var.ec2_instance_type
   subnet_id              = aws_subnet.public.id

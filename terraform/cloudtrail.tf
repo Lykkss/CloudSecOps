@@ -61,13 +61,13 @@ resource "aws_iam_role_policy" "cloudtrail_cloudwatch" {
 # CIS AWS Benchmark 3.2 : activer la validation d'intégrité des logs
 # CloudTrail non déployé en LocalStack Community (Pro feature)
 resource "aws_cloudtrail" "main" {
-  count = var.localstack_enabled ? 0 : 1
+  count                         = var.localstack_enabled ? 0 : 1
   name                          = "${var.project_name}-trail"
   s3_bucket_name                = aws_s3_bucket.logs.id
   s3_key_prefix                 = "cloudtrail"
-  include_global_service_events = true  # Capture IAM, STS, etc. (services globaux)
-  is_multi_region_trail         = true  # CIS 3.1 : surveillance toutes les régions
-  enable_log_file_validation    = true  # CIS 3.2 : détection de tampering sur les logs
+  include_global_service_events = true # Capture IAM, STS, etc. (services globaux)
+  is_multi_region_trail         = true # CIS 3.1 : surveillance toutes les régions
+  enable_log_file_validation    = true # CIS 3.2 : détection de tampering sur les logs
   enable_logging                = true
 
   # Export vers CloudWatch Logs pour les alarmes en temps réel

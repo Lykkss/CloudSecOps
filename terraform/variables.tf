@@ -25,6 +25,6 @@ variable "localstack_enabled" {
 variable "admin_cidr" {
   description = "CIDR autorisé pour SSH admin (ex: votre IP publique /32)"
   type        = string
-  default     = "0.0.0.0/0"  # A restreindre en prod à votre IP : "X.X.X.X/32"
+  default     = "0.0.0.0/0" # A restreindre en prod à votre IP : "X.X.X.X/32"
 }
 

@@ -6,14 +6,14 @@ provider "aws" {
   dynamic "endpoints" {
     for_each = var.localstack_enabled ? [1] : []
     content {
-      ec2          = "http://localhost:4566"
-      s3           = "http://s3.localhost.localstack.cloud:4566"
-      iam          = "http://localhost:4566"
-      sts          = "http://localhost:4566"
-      cloudtrail   = "http://localhost:4566"
-      cloudwatch   = "http://localhost:4566"
+      ec2            = "http://localhost:4566"
+      s3             = "http://s3.localhost.localstack.cloud:4566"
+      iam            = "http://localhost:4566"
+      sts            = "http://localhost:4566"
+      cloudtrail     = "http://localhost:4566"
+      cloudwatch     = "http://localhost:4566"
       cloudwatchlogs = "http://localhost:4566"
-      rds          = "http://localhost:4566"
+      rds            = "http://localhost:4566"
     }
   }
 

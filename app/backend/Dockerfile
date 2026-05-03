@@ -22,6 +22,10 @@ COPY frontend/ ../frontend/
 # Répertoire pour les uploads APK temporaires
 RUN mkdir -p /app/uploads
 
+# Installation de apkeep pour téléchargement APK Play Store
+RUN curl -L 'https://github.com/EFForg/apkeep/releases/download/0.17.0/apkeep-x86_64-unknown-linux-gnu' \
+    -o /usr/local/bin/apkeep && chmod +x /usr/local/bin/apkeep
+
 # Utilisateur non-root (OWASP)
 RUN useradd -m appuser && chown -R appuser:appuser /app /frontend /app/uploads 2>/dev/null || true
 USER appuser

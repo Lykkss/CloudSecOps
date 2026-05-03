@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table, func
 from sqlalchemy.orm import relationship
 
 from core.database import Base
@@ -41,7 +41,11 @@ class User(Base):
     id_user = Column(Integer, primary_key=True, index=True)
     email = Column(String(150), unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        default=lambda: datetime.now(timezone.utc),
+    )
     is_active = Column(Boolean, default=True)
     id_role = Column(Integer, ForeignKey("role.id_role"), nullable=False)
 

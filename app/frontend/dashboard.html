@@ -6,17 +6,13 @@
   <title>CloudSecOps — Tableau de bord</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg: #0d1117; --surface: #161b22; --surface2: #1c2128;
       --border: #30363d; --text: #e6edf3; --muted: #8b949e;
       --accent: #58a6ff; --green: #238636; --green-h: #2ea043;
       --red: #da3633; --red-h: #f85149; --orange: #d29922; --purple: #8957e5;
     }
-
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* ── Navbar ── */
+    body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
     nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: .75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
     .nav-brand { display: flex; align-items: center; gap: .5rem; }
     .nav-brand svg { width: 22px; height: 22px; }
@@ -24,87 +20,48 @@
     .nav-right { display: flex; align-items: center; gap: .75rem; }
     .badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; padding: .2rem .65rem; font-size: .78rem; color: var(--muted); }
     .badge b { color: var(--accent); }
-
-    /* ── Tabs ── */
     .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); padding: 0 1.5rem; overflow-x: auto; scrollbar-width: thin; }
     .tab { padding: .75rem 1rem; font-size: .88rem; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted); white-space: nowrap; transition: color .15s, border-color .15s; user-select: none; }
     .tab:hover { color: var(--text); }
     .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-    /* ── Layout ── */
     main { max-width: 1080px; margin: 1.5rem auto; padding: 0 1.5rem; }
     .section { display: none; }
     .section.active { display: block; }
-
-    /* ── Cards ── */
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
     .card-title { font-size: .95rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
-
-    /* ── Stat grid ── */
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: .75rem; }
     .stat { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: .75rem 1rem; text-align: center; }
     .stat .val { font-size: 1.8rem; font-weight: 700; }
     .stat .lbl { font-size: .75rem; color: var(--muted); margin-top: .2rem; text-transform: uppercase; letter-spacing: .04em; }
-    .val-crit { color: var(--red-h); }
-    .val-high { color: var(--orange); }
-    .val-med  { color: #e3b341; }
-    .val-low  { color: #3fb950; }
-    .val-pass { color: #3fb950; }
-    .val-fail { color: var(--red-h); }
-
-    /* ── Buttons ── */
+    .val-crit { color: var(--red-h); } .val-high { color: var(--orange); } .val-med { color: #e3b341; } .val-low { color: #3fb950; } .val-pass { color: #3fb950; }
     .btn { border: none; border-radius: 6px; padding: .4rem .9rem; font-size: .85rem; font-weight: 600; cursor: pointer; transition: background .15s; }
-    .btn-primary { background: var(--green); color: #fff; }
-    .btn-primary:hover { background: var(--green-h); }
-    .btn-danger { background: var(--red); color: #fff; }
-    .btn-danger:hover { background: var(--red-h); }
-    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
-    .btn-outline:hover { background: var(--surface2); }
-    .btn-accent { background: #1d3a5e; color: var(--accent); border: 1px solid #2d4f7e; }
-    .btn-accent:hover { background: #2d4f7e; }
-    .btn-purple { background: #2d1e4e; color: var(--purple); border: 1px solid #4a2d82; }
-    .btn-purple:hover { background: #3d2a6a; }
-    .btn-pdf { background: #2a1a0e; color: var(--orange); border: 1px solid #5a3a0e; }
-    .btn-pdf:hover { background: #3a2a1e; }
+    .btn-primary { background: var(--green); color: #fff; } .btn-primary:hover { background: var(--green-h); }
+    .btn-danger { background: var(--red); color: #fff; } .btn-danger:hover { background: var(--red-h); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); } .btn-outline:hover { background: var(--surface2); }
+    .btn-accent { background: #1d3a5e; color: var(--accent); border: 1px solid #2d4f7e; } .btn-accent:hover { background: #2d4f7e; }
+    .btn-purple { background: #2d1e4e; color: var(--purple); border: 1px solid #4a2d82; } .btn-purple:hover { background: #3d2a6a; }
+    .btn-pdf { background: #2a1a0e; color: var(--orange); border: 1px solid #5a3a0e; } .btn-pdf:hover { background: #3a2a1e; }
     .btn-sm { padding: .22rem .55rem; font-size: .76rem; }
     .btn:disabled { opacity: .45; cursor: not-allowed; }
-
-    /* ── Tables ── */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: .86rem; }
     th { text-align: left; padding: .5rem .75rem; font-size: .73rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); border-bottom: 1px solid var(--border); }
     td { padding: .6rem .75rem; border-bottom: 1px solid #21262d; vertical-align: middle; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: var(--surface2); }
-
-    /* ── Pills ── */
     .pill { display: inline-block; border-radius: 20px; padding: .15rem .6rem; font-size: .75rem; font-weight: 600; }
-    .pill-critical { background: #3d1a1a; color: var(--red-h); }
-    .pill-high     { background: #3d2d10; color: var(--orange); }
-    .pill-medium   { background: #3d3410; color: #e3b341; }
-    .pill-low      { background: #1a2f1a; color: #3fb950; }
-    .pill-passed   { background: #1a2f1a; color: #3fb950; }
-    .pill-failed   { background: #3d1a1a; color: var(--red-h); }
-    .pill-pending  { background: #2a2a10; color: #e3b341; }
-    .pill-completed{ background: #1a2f1a; color: #3fb950; }
-    .pill-open         { background: #3d1a1a; color: var(--red-h); }
-    .pill-investigating{ background: #3d2d10; color: var(--orange); }
-    .pill-resolved     { background: #1a2f1a; color: #3fb950; }
-    .pill-draft  { background: var(--surface2); color: var(--muted); }
-    .pill-final  { background: #1d2d4e; color: var(--accent); }
-    .pill-admin  { background: #1d3a5e; color: var(--accent); }
-    .pill-user   { background: #1a2f1a; color: #3fb950; }
-    .pill-active  { background: #1a2f1a; color: #3fb950; }
-    .pill-inactive{ background: #3d1a1a; color: var(--red-h); }
+    .pill-critical { background: #3d1a1a; color: var(--red-h); } .pill-high { background: #3d2d10; color: var(--orange); }
+    .pill-medium { background: #3d3410; color: #e3b341; } .pill-low { background: #1a2f1a; color: #3fb950; }
+    .pill-passed { background: #1a2f1a; color: #3fb950; } .pill-failed { background: #3d1a1a; color: var(--red-h); }
+    .pill-pending { background: #2a2a10; color: #e3b341; } .pill-completed { background: #1a2f1a; color: #3fb950; }
+    .pill-downloading { background: #1d2d4e; color: var(--accent); }
+    .pill-open { background: #3d1a1a; color: var(--red-h); } .pill-investigating { background: #3d2d10; color: var(--orange); } .pill-resolved { background: #1a2f1a; color: #3fb950; }
+    .pill-draft { background: var(--surface2); color: var(--muted); } .pill-final { background: #1d2d4e; color: var(--accent); }
+    .pill-admin { background: #1d3a5e; color: var(--accent); } .pill-user { background: #1a2f1a; color: #3fb950; }
+    .pill-active { background: #1a2f1a; color: #3fb950; } .pill-inactive { background: #3d1a1a; color: var(--red-h); }
     .pill-in_progress { background: #3d2d10; color: var(--orange); }
-    .pill-risk-critical { background: #3d1a1a; color: var(--red-h); }
-    .pill-risk-high     { background: #3d2d10; color: var(--orange); }
-    .pill-risk-low      { background: #1a2f1a; color: #3fb950; }
-
-    /* ── Empty state ── */
+    .pill-risk-critical { background: #3d1a1a; color: var(--red-h); } .pill-risk-high { background: #3d2d10; color: var(--orange); } .pill-risk-low { background: #1a2f1a; color: #3fb950; }
     .empty { text-align: center; padding: 2.5rem; color: var(--muted); font-size: .9rem; }
-
-    /* ── Panel détail ── */
     .detail-panel { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-top: 1rem; }
     .detail-panel h4 { font-size: .85rem; color: var(--muted); margin-bottom: .75rem; text-transform: uppercase; letter-spacing: .05em; }
     .timeline-item { display: flex; gap: .75rem; padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: .83rem; }
@@ -114,56 +71,34 @@
     .tl-body .detail { color: var(--muted); font-size: .8rem; margin-top: .15rem; }
     .ioc-table { width: 100%; font-size: .82rem; }
     .ioc-type { color: var(--accent); font-weight: 600; }
-
-    /* ── Modal ── */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 200; display: none; align-items: center; justify-content: center; }
     .modal-overlay.open { display: flex; }
     .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 1rem; font-weight: 700; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
     .modal-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
     label.field { display: block; font-size: .8rem; color: var(--muted); margin-bottom: .3rem; margin-top: .75rem; }
-    input.field, textarea.field, select.field {
-      width: 100%; background: #0d1117; border: 1px solid var(--border); border-radius: 6px;
-      color: var(--text); padding: .45rem .65rem; font-size: .88rem; outline: none; font-family: inherit;
-    }
+    input.field, textarea.field, select.field { width: 100%; background: #0d1117; border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .45rem .65rem; font-size: .88rem; outline: none; font-family: inherit; }
     textarea.field { min-height: 80px; resize: vertical; }
     input.field:focus, textarea.field:focus, select.field:focus { border-color: var(--accent); }
-
-    /* ── Profile ── */
     .kv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .75rem; }
     .kv label { font-size: .73rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
     .kv p { margin-top: .2rem; font-size: .92rem; word-break: break-all; }
-
-    /* ── Create user form ── */
     .create-form { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: .6rem; align-items: end; margin-bottom: 1.25rem; }
     .fg label { display: block; font-size: .78rem; color: var(--muted); margin-bottom: .28rem; }
     .fg input, .fg select { width: 100%; background: #0d1117; border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .42rem .6rem; font-size: .86rem; outline: none; }
     .fg input:focus, .fg select:focus { border-color: var(--accent); }
-
-    /* ── Toast ── */
     .toast { position: fixed; bottom: 1.25rem; right: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: .65rem .95rem; font-size: .85rem; max-width: 340px; display: none; z-index: 999; }
-    .toast.success { border-color: #3fb950; color: #3fb950; }
-    .toast.error   { border-color: var(--red-h); color: var(--red-h); }
-
-    /* ── Spinner ── */
+    .toast.success { border-color: #3fb950; color: #3fb950; } .toast.error { border-color: var(--red-h); color: var(--red-h); }
     .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Upload drop zone ── */
     .drop-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 2rem; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
     .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: rgba(88,166,255,.05); }
     .drop-zone input { display: none; }
     .drop-zone .dz-icon { font-size: 2rem; margin-bottom: .5rem; }
     .drop-zone .dz-text { color: var(--muted); font-size: .88rem; }
     .drop-zone .dz-hint { color: var(--accent); font-size: .8rem; margin-top: .3rem; }
-
-    /* ── Score badge ── */
     .score-badge { display: inline-block; border-radius: 6px; padding: .2rem .6rem; font-size: .88rem; font-weight: 700; }
-    .score-red    { background: #3d1a1a; color: var(--red-h); }
-    .score-orange { background: #3d2d10; color: var(--orange); }
-    .score-green  { background: #1a2f1a; color: #3fb950; }
-
-    /* ── AI Chat ── */
+    .score-red { background: #3d1a1a; color: var(--red-h); } .score-orange { background: #3d2d10; color: var(--orange); } .score-green { background: #1a2f1a; color: #3fb950; }
     .chat-container { display: flex; flex-direction: column; height: 500px; }
     .chat-messages { flex: 1; overflow-y: auto; padding: .75rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px 8px 0 0; scrollbar-width: thin; }
     .chat-input-row { display: flex; gap: .5rem; padding: .6rem; background: var(--surface2); border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; }
@@ -178,24 +113,19 @@
     .chat-msg.user .sender { text-align: right; }
     .ai-status-bar { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: .65rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: .75rem; font-size: .83rem; }
     .ai-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
-    .ai-dot.online { background: #3fb950; }
-    .ai-dot.offline { background: var(--red-h); }
+    .ai-dot.online { background: #3fb950; } .ai-dot.offline { background: var(--red-h); }
     .streaming-cursor { display: inline-block; width: 2px; height: 1em; background: var(--accent); animation: blink .7s step-end infinite; vertical-align: text-bottom; margin-left: 1px; }
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-
-    /* ── Logs ── */
     .log-pane { display: grid; grid-template-columns: 260px 1fr; gap: 1rem; }
     .log-groups-list { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; max-height: 520px; overflow-y: auto; scrollbar-width: thin; }
     .log-group-item { padding: .55rem .85rem; border-bottom: 1px solid var(--border); cursor: pointer; font-size: .82rem; color: var(--muted); transition: background .15s; word-break: break-all; }
     .log-group-item:hover { background: var(--surface); color: var(--text); }
     .log-group-item.active { background: #1d2d4e; color: var(--accent); }
-    .log-events-pane { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: .75rem; font-family: 'Courier New', monospace; font-size: .78rem; max-height: 520px; overflow-y: auto; scrollbar-width: thin; white-space: pre-wrap; word-break: break-all; color: #3fb950; }
+    .log-events-pane { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: .75rem; font-family: "Courier New", monospace; font-size: .78rem; max-height: 520px; overflow-y: auto; scrollbar-width: thin; white-space: pre-wrap; word-break: break-all; color: #3fb950; }
     .log-event-line { padding: .15rem 0; border-bottom: 1px solid #21262d; }
     .log-event-line .log-ts { color: var(--muted); margin-right: .75rem; }
     .log-stream-item { padding: .45rem .75rem; border-bottom: 1px solid var(--border); cursor: pointer; font-size: .8rem; color: var(--text); transition: background .15s; }
     .log-stream-item:hover { background: var(--surface); }
-
-    /* ── EBIOS ── */
     .ebios-project { border: 1px solid var(--border); border-radius: 8px; margin-bottom: .75rem; overflow: hidden; }
     .ebios-project-header { padding: .75rem 1rem; background: var(--surface2); display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
     .ebios-project-body { padding: 1rem; display: none; }
@@ -204,27 +134,24 @@
     .ebios-section-title { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: .5rem; display: flex; align-items: center; justify-content: space-between; }
     .risk-matrix { display: grid; grid-template-columns: 30px repeat(4, 1fr); gap: 2px; font-size: .72rem; text-align: center; margin-top: .5rem; }
     .risk-cell { padding: .35rem .2rem; border-radius: 4px; font-weight: 600; }
-    .risk-vhigh { background: #3d1a1a; color: var(--red-h); }
-    .risk-high { background: #3d2d10; color: var(--orange); }
-    .risk-med { background: #3d3410; color: #e3b341; }
-    .risk-low-c { background: #1a2f1a; color: #3fb950; }
+    .risk-vhigh { background: #3d1a1a; color: var(--red-h); } .risk-high { background: #3d2d10; color: var(--orange); } .risk-med { background: #3d3410; color: #e3b341; } .risk-low-c { background: #1a2f1a; color: #3fb950; }
     .risk-label { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: .68rem; }
-
-    /* ── Mini form inline ── */
     .mini-form { display: flex; gap: .4rem; flex-wrap: wrap; align-items: flex-end; margin-top: .5rem; padding: .65rem; background: var(--bg); border-radius: 6px; border: 1px solid var(--border); }
     .mini-form input, .mini-form select, .mini-form textarea { background: var(--surface2); border: 1px solid var(--border); border-radius: 5px; color: var(--text); padding: .32rem .55rem; font-size: .8rem; outline: none; }
     .mini-form input:focus, .mini-form select:focus, .mini-form textarea:focus { border-color: var(--accent); }
     .mini-form .mf-label { font-size: .72rem; color: var(--muted); margin-bottom: .15rem; display: block; }
     .mini-form .mf-group { display: flex; flex-direction: column; }
     .mini-form textarea { min-height: 50px; resize: vertical; font-family: inherit; }
-
+    .url-scan-box { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+    .url-scan-row { display: flex; gap: .5rem; margin-top: .5rem; }
+    .url-scan-row input { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); padding: .5rem .75rem; font-size: .88rem; outline: none; }
+    .url-scan-row input:focus { border-color: var(--accent); }
     .hidden { display: none !important; }
-    @media (max-width: 640px) { .create-form { grid-template-columns: 1fr; } .log-pane { grid-template-columns: 1fr; } }
+    @media (max-width: 640px) { .create-form { grid-template-columns: 1fr; } .log-pane { grid-template-columns: 1fr; } .url-scan-row { flex-direction: column; } }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav>
   <div class="nav-brand">
     <svg viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -233,28 +160,26 @@
     <span>CloudSecOps</span>
   </div>
   <div class="nav-right">
-    <div class="badge" id="user-badge">…</div>
+    <div class="badge" id="user-badge">...</div>
     <a href="/docs" target="_blank" class="btn btn-accent" style="text-decoration:none;font-size:.82rem">Swagger</a>
-    <button class="btn btn-danger btn-sm" onclick="logout()">Déconnexion</button>
+    <button class="btn btn-danger btn-sm" onclick="logout()">Deconnexion</button>
   </div>
 </nav>
 
-<!-- Tabs -->
 <div class="tabs">
-  <div class="tab active" data-tab="profile">👤 Profil</div>
-  <div class="tab admin-only hidden" data-tab="users">🛡️ Utilisateurs</div>
-  <div class="tab admin-only hidden" data-tab="scans">🔍 Scans</div>
-  <div class="tab admin-only hidden" data-tab="incidents">🚨 Incidents</div>
-  <div class="tab admin-only hidden" data-tab="reports">📋 Rapports</div>
-  <div class="tab admin-only hidden" data-tab="mobile">📱 Scan Mobile</div>
-  <div class="tab admin-only hidden" data-tab="ebios">⚠️ EBIOS RM</div>
-  <div class="tab admin-only hidden" data-tab="ai">🤖 IA</div>
-  <div class="tab admin-only hidden" data-tab="logs">📊 Logs</div>
+  <div class="tab active" data-tab="profile">Profil</div>
+  <div class="tab admin-only hidden" data-tab="users">Utilisateurs</div>
+  <div class="tab admin-only hidden" data-tab="scans">Scans Trivy</div>
+  <div class="tab admin-only hidden" data-tab="incidents">Incidents</div>
+  <div class="tab admin-only hidden" data-tab="reports">Rapports</div>
+  <div class="tab admin-only hidden" data-tab="mobile">Scan Mobile</div>
+  <div class="tab admin-only hidden" data-tab="ebios">EBIOS RM</div>
+  <div class="tab admin-only hidden" data-tab="ai">IA Ollama</div>
+  <div class="tab admin-only hidden" data-tab="logs">Logs AWS</div>
 </div>
 
 <main>
 
-  <!-- ── Profil ── -->
   <div class="section active" id="tab-profile">
     <div class="card">
       <div class="card-title">Mon profil</div>
@@ -262,79 +187,75 @@
     </div>
   </div>
 
-  <!-- ── Utilisateurs ── -->
   <div class="section" id="tab-users">
     <div class="card">
       <div class="card-title">Gestion des utilisateurs</div>
       <form class="create-form" id="create-form">
         <div class="fg"><label>E-mail</label><input id="new-email" type="email" placeholder="user@example.com" required /></div>
-        <div class="fg"><label>Mot de passe</label><input id="new-password" type="password" placeholder="••••••••" required minlength="8" /></div>
-        <div class="fg"><label>Rôle</label><select id="new-role"><option value="2">user</option><option value="1">admin</option></select></div>
-        <button type="submit" class="btn btn-primary">+ Créer</button>
+        <div class="fg"><label>Mot de passe</label><input id="new-password" type="password" placeholder="min 8 caracteres" required minlength="8" /></div>
+        <div class="fg"><label>Role</label><select id="new-role"><option value="2">user</option><option value="1">admin</option></select></div>
+        <button type="submit" class="btn btn-primary">+ Creer</button>
       </form>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>E-mail</th><th>Rôle</th><th>Statut</th><th>Créé le</th><th>Action</th></tr></thead>
+          <thead><tr><th>#</th><th>E-mail</th><th>Role</th><th>Statut</th><th>Cree le</th><th>Action</th></tr></thead>
           <tbody id="users-tbody"><tr><td colspan="6"><span class="spinner"></span></td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- ── Scans ── -->
   <div class="section" id="tab-scans">
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
-        <span>Scans de vulnérabilités (Trivy)</span>
-        <button class="btn btn-outline btn-sm" onclick="loadScans()">↻ Actualiser</button>
+        <span>Scans de vulnerabilites (Trivy CI/CD)</span>
+        <button class="btn btn-outline btn-sm" onclick="loadScans()">Actualiser</button>
       </div>
       <div id="scans-content"><span class="spinner"></span></div>
     </div>
     <div class="card hidden" id="scan-detail-card">
       <div class="card-title" style="justify-content:space-between">
-        <span id="scan-detail-title">Détail</span>
+        <span id="scan-detail-title">Detail</span>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn btn-purple btn-sm" id="scan-ai-btn" onclick="analyzeScanWithAI()">🤖 Analyser avec l'IA</button>
-          <button class="btn btn-pdf btn-sm" id="scan-pdf-btn" onclick="exportScanPdf()">⬇️ PDF</button>
-          <button class="btn btn-outline btn-sm" onclick="closeScanDetail()">✕ Fermer</button>
+          <button class="btn btn-purple btn-sm" onclick="analyzeScanWithAI()">IA Analyser</button>
+          <button class="btn btn-pdf btn-sm" onclick="exportScanPdf()">PDF</button>
+          <button class="btn btn-outline btn-sm" onclick="closeScanDetail()">Fermer</button>
         </div>
       </div>
       <div id="scan-detail-content"></div>
     </div>
   </div>
 
-  <!-- ── Incidents ── -->
   <div class="section" id="tab-incidents">
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
-        <span>Incidents de sécurité</span>
+        <span>Incidents de securite AWS</span>
         <div style="display:flex;gap:.5rem">
-          <button class="btn btn-outline btn-sm" onclick="loadIncidents()">↻ Actualiser</button>
-          <button class="btn btn-danger btn-sm" onclick="simulateIAM()" id="simulate-btn">⚡ Simuler compromission IAM</button>
+          <button class="btn btn-outline btn-sm" onclick="loadIncidents()">Actualiser</button>
+          <button class="btn btn-danger btn-sm" onclick="simulateIAM()" id="simulate-btn">Simuler compromission IAM</button>
         </div>
       </div>
       <div id="incidents-content"><span class="spinner"></span></div>
     </div>
     <div class="card hidden" id="incident-detail-card">
       <div class="card-title" style="justify-content:space-between">
-        <span id="incident-detail-title">Détail de l'incident</span>
+        <span id="incident-detail-title">Detail de l incident</span>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn btn-purple btn-sm" id="incident-ai-btn" onclick="analyzeIncidentWithAI()">🤖 Analyser avec l'IA</button>
-          <button class="btn btn-pdf btn-sm" id="incident-pdf-btn" onclick="exportIncidentPdf()">⬇️ PDF</button>
-          <button class="btn btn-outline btn-sm" onclick="closeIncidentDetail()">✕ Fermer</button>
+          <button class="btn btn-purple btn-sm" onclick="analyzeIncidentWithAI()">IA Analyser</button>
+          <button class="btn btn-pdf btn-sm" onclick="exportIncidentPdf()">PDF</button>
+          <button class="btn btn-outline btn-sm" onclick="closeIncidentDetail()">Fermer</button>
         </div>
       </div>
       <div id="incident-detail-content"></div>
     </div>
   </div>
 
-  <!-- ── Rapports ── -->
   <div class="section" id="tab-reports">
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
         <span>Rapports forensiques</span>
         <div style="display:flex;gap:.5rem">
-          <button class="btn btn-outline btn-sm" onclick="loadReports()">↻ Actualiser</button>
+          <button class="btn btn-outline btn-sm" onclick="loadReports()">Actualiser</button>
           <button class="btn btn-primary btn-sm" onclick="openReportModal()">+ Nouveau rapport</button>
         </div>
       </div>
@@ -342,113 +263,118 @@
     </div>
     <div class="card hidden" id="report-detail-card">
       <div class="card-title" style="justify-content:space-between">
-        <span id="report-detail-title">Détail du rapport</span>
+        <span id="report-detail-title">Detail du rapport</span>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn btn-pdf btn-sm" id="report-pdf-btn" onclick="exportReportPdf()">⬇️ PDF</button>
-          <button class="btn btn-outline btn-sm" onclick="closeReportDetail()">✕ Fermer</button>
+          <button class="btn btn-pdf btn-sm" onclick="exportReportPdf()">PDF</button>
+          <button class="btn btn-outline btn-sm" onclick="closeReportDetail()">Fermer</button>
         </div>
       </div>
       <div id="report-detail-content"></div>
     </div>
   </div>
 
-  <!-- ── Scan Mobile ── -->
   <div class="section" id="tab-mobile">
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
-        <span>📱 Scanner une application mobile (APK)</span>
-        <button class="btn btn-outline btn-sm" onclick="loadMobileScans()">↻ Actualiser</button>
+        <span>Scanner une application mobile</span>
+        <button class="btn btn-outline btn-sm" onclick="loadMobileScans()">Actualiser</button>
       </div>
-      <!-- Scan depuis URL Play Store -->
-    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem">
-      <div style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem">Scanner depuis le Play Store ou App Store</div>
-      <div style="display:flex;gap:.5rem">
-        <input type="url" id="playstore-url-input"
-          placeholder="https://play.google.com/store/apps/details?id=com.example.app"
-          style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.5rem .75rem;font-size:.88rem;outline:none" />
-        <button class="btn btn-primary" onclick="scanFromUrl()">Scanner</button>
+
+      <div class="url-scan-box">
+        <div style="font-size:.82rem;color:var(--muted);font-weight:600">Scanner depuis le Play Store</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:.25rem">Entrez l URL Play Store ou App Store de l application a analyser</div>
+        <div class="url-scan-row">
+          <input type="url" id="playstore-url-input" placeholder="https://play.google.com/store/apps/details?id=com.example.app" />
+          <button class="btn btn-primary" onclick="scanFromUrl()">Analyser</button>
+        </div>
+        <div id="url-scan-status" style="margin-top:.5rem;font-size:.83rem"></div>
       </div>
-      <div id="url-scan-status" style="margin-top:.5rem;font-size:.83rem"></div>
+
+      <div style="margin-bottom:.75rem;font-size:.82rem;color:var(--muted)">Ou uploadez un fichier APK directement :</div>
+      <div class="drop-zone" id="apk-drop-zone" onclick="document.getElementById('apk-file-input').click()">
+        <input type="file" id="apk-file-input" accept=".apk" onchange="handleApkSelect(this.files[0])" />
+        <div class="dz-icon">&#128230;</div>
+        <div class="dz-text">Glissez-deposez un fichier APK ici</div>
+        <div class="dz-hint">ou cliquez pour selectionner un fichier (.apk max 200 Mo)</div>
+      </div>
+      <div id="apk-upload-status" style="margin-top:.75rem"></div>
+
+      <div style="margin-top:1.25rem" id="mobile-scans-content"><span class="spinner"></span></div>
     </div>
-    <!-- Détail mobile scan -->
+
     <div class="card hidden" id="mobile-detail-card">
       <div class="card-title" style="justify-content:space-between">
-        <span id="mobile-detail-title">Détail du scan mobile</span>
+        <span id="mobile-detail-title">Detail du scan mobile</span>
         <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-          <button class="btn btn-pdf btn-sm" id="mobile-pdf-btn" onclick="exportMobilePdf()">⬇️ PDF</button>
-          <button class="btn btn-outline btn-sm" onclick="closeMobileDetail()">✕ Fermer</button>
+          <button class="btn btn-pdf btn-sm" onclick="exportMobilePdf()">PDF</button>
+          <button class="btn btn-outline btn-sm" onclick="closeMobileDetail()">Fermer</button>
         </div>
       </div>
       <div id="mobile-detail-content"></div>
     </div>
   </div>
 
-  <!-- ── EBIOS RM ── -->
   <div class="section" id="tab-ebios">
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
-        <span>⚠️ EBIOS Risk Manager</span>
+        <span>EBIOS Risk Manager</span>
         <button class="btn btn-primary btn-sm" onclick="openEbiosModal()">+ Nouveau projet</button>
       </div>
       <div id="ebios-content"><span class="spinner"></span></div>
     </div>
   </div>
 
-  <!-- ── IA Assistant ── -->
   <div class="section" id="tab-ai">
     <div class="card">
-      <div class="card-title">🤖 Assistant IA (Ollama)</div>
+      <div class="card-title">Assistant IA (Ollama)</div>
       <div class="ai-status-bar" id="ai-status-bar">
         <div class="ai-dot" id="ai-dot"></div>
-        <span id="ai-status-text">Vérification de la connexion Ollama…</span>
+        <span id="ai-status-text">Verification de la connexion Ollama...</span>
       </div>
       <div style="display:flex;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap;align-items:center">
         <div>
           <label style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:.25rem">Contexte</label>
-          <select id="ai-context-select" class="field" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.35rem .65rem;font-size:.83rem;outline:none">
+          <select id="ai-context-select" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.35rem .65rem;font-size:.83rem;outline:none">
             <option value="">Sans contexte</option>
           </select>
         </div>
         <div>
-          <label style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:.25rem">Modèle</label>
-          <select id="ai-model-select" class="field" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.35rem .65rem;font-size:.83rem;outline:none">
-            <option value="">Défaut</option>
+          <label style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:.25rem">Modele</label>
+          <select id="ai-model-select" style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.35rem .65rem;font-size:.83rem;outline:none">
+            <option value="">Defaut</option>
           </select>
         </div>
-        <button class="btn btn-outline btn-sm" onclick="clearChat()" style="margin-top:1.2rem">🗑️ Vider</button>
+        <button class="btn btn-outline btn-sm" onclick="clearChat()" style="margin-top:1.2rem">Vider</button>
       </div>
       <div class="chat-container">
         <div class="chat-messages" id="chat-messages">
-          <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Posez une question à l'assistant IA…</div>
+          <div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Posez une question a l assistant IA...</div>
         </div>
         <div class="chat-input-row">
-          <input type="text" id="chat-input" placeholder="Posez votre question…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}" />
+          <input type="text" id="chat-input" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}" />
           <button class="btn btn-accent" id="chat-send-btn" onclick="sendChat()">Envoyer</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Logs AWS ── -->
   <div class="section" id="tab-logs">
     <div class="card">
       <div class="card-title" style="justify-content:space-between">
-        <span>📊 Logs CloudWatch (AWS)</span>
-        <button class="btn btn-outline btn-sm" onclick="loadLogGroups()">↻ Actualiser</button>
+        <span>Logs CloudWatch (AWS)</span>
+        <button class="btn btn-outline btn-sm" onclick="loadLogGroups()">Actualiser</button>
       </div>
       <div style="margin-bottom:.75rem">
-        <input id="log-group-search" class="field" style="max-width:320px" placeholder="Filtrer les groupes…" oninput="filterLogGroups()" />
+        <input id="log-group-search" style="max-width:320px;background:#0d1117;border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.42rem .6rem;font-size:.86rem;outline:none" placeholder="Filtrer les groupes..." oninput="filterLogGroups()" />
       </div>
       <div class="log-pane">
         <div>
           <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem">Groupes de logs</div>
-          <div class="log-groups-list" id="log-groups-list"><div class="empty">Chargement…</div></div>
+          <div class="log-groups-list" id="log-groups-list"><div class="empty">Chargement...</div></div>
         </div>
         <div>
-          <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem" id="log-right-label">Sélectionnez un groupe</div>
-          <div id="log-right-pane">
-            <div style="color:var(--muted);font-size:.85rem;padding:1rem">← Sélectionnez un groupe de logs</div>
-          </div>
+          <div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.4rem" id="log-right-label">Selectionnez un groupe</div>
+          <div id="log-right-pane"><div style="color:var(--muted);font-size:.85rem;padding:1rem">Selectionnez un groupe de logs</div></div>
         </div>
       </div>
     </div>
@@ -456,63 +382,43 @@
 
 </main>
 
-<!-- Modal création rapport -->
 <div class="modal-overlay" id="report-modal">
   <div class="modal">
-    <div class="modal-title">
-      <span>Nouveau rapport forensique</span>
-      <button class="modal-close" onclick="closeReportModal()">✕</button>
-    </div>
+    <div class="modal-title"><span>Nouveau rapport forensique</span><button class="modal-close" onclick="closeReportModal()">x</button></div>
     <form id="report-form">
       <label class="field">Titre</label>
-      <input class="field" id="r-title" placeholder="Rapport d'investigation IAM #1" required />
-
-      <label class="field">Incident lié (ID, optionnel)</label>
+      <input class="field" id="r-title" placeholder="Rapport d investigation IAM" required />
+      <label class="field">Incident lie (ID, optionnel)</label>
       <input class="field" id="r-incident" type="number" placeholder="ex: 1" />
-
-      <label class="field">Résumé exécutif</label>
-      <textarea class="field" id="r-summary" placeholder="Résumé de l'incident, impacts, contexte…" required></textarea>
-
-      <label class="field">Constatations (une par ligne : SEVERITY|Titre|Description)</label>
-      <textarea class="field" id="r-findings" rows="5" placeholder="CRITICAL|Clé IAM exposée|La clé AKIA… a été trouvée sur GitHub public&#10;HIGH|CloudTrail désactivé|L'attaquant a coupé les logs avant l'exfiltration"></textarea>
-
-      <label class="field">Recommandations (une par ligne : PRIORITY|Action|Responsable)</label>
-      <textarea class="field" id="r-recs" rows="4" placeholder="immediate|Révoquer toutes les clés IAM compromises|SecOps&#10;short_term|Activer AWS GuardDuty|Cloud Team"></textarea>
-
+      <label class="field">Resume executif</label>
+      <textarea class="field" id="r-summary" placeholder="Resume de l incident..." required></textarea>
+      <label class="field">Constatations (SEVERITY|Titre|Description par ligne)</label>
+      <textarea class="field" id="r-findings" rows="5" placeholder="CRITICAL|Cle IAM exposee|Trouvee sur GitHub"></textarea>
+      <label class="field">Recommandations (PRIORITY|Action|Responsable par ligne)</label>
+      <textarea class="field" id="r-recs" rows="4" placeholder="immediate|Revoquer les cles IAM|SecOps"></textarea>
       <label class="field">Statut</label>
-      <select class="field" id="r-status">
-        <option value="draft">Brouillon</option>
-        <option value="final">Final</option>
-      </select>
-
+      <select class="field" id="r-status"><option value="draft">Brouillon</option><option value="final">Final</option></select>
       <div style="display:flex;gap:.5rem;margin-top:1rem;justify-content:flex-end">
         <button type="button" class="btn btn-outline" onclick="closeReportModal()">Annuler</button>
-        <button type="submit" class="btn btn-primary">Créer le rapport</button>
+        <button type="submit" class="btn btn-primary">Creer le rapport</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- Modal création projet EBIOS -->
 <div class="modal-overlay" id="ebios-modal">
   <div class="modal">
-    <div class="modal-title">
-      <span>Nouveau projet EBIOS RM</span>
-      <button class="modal-close" onclick="closeEbiosModal()">✕</button>
-    </div>
+    <div class="modal-title"><span>Nouveau projet EBIOS RM</span><button class="modal-close" onclick="closeEbiosModal()">x</button></div>
     <form id="ebios-form">
       <label class="field">Nom du projet</label>
       <input class="field" id="eb-name" placeholder="Analyse de risques SI Prod" required />
-
-      <label class="field">Périmètre (scope)</label>
-      <textarea class="field" id="eb-scope" placeholder="Systèmes concernés, frontières du périmètre…"></textarea>
-
+      <label class="field">Perimetre (scope)</label>
+      <textarea class="field" id="eb-scope" placeholder="Systemes concernes..."></textarea>
       <label class="field">Contexte</label>
-      <textarea class="field" id="eb-context" placeholder="Secteur d'activité, enjeux métier, contraintes réglementaires…"></textarea>
-
+      <textarea class="field" id="eb-context" placeholder="Secteur d activite, enjeux metier..."></textarea>
       <div style="display:flex;gap:.5rem;margin-top:1rem;justify-content:flex-end">
         <button type="button" class="btn btn-outline" onclick="closeEbiosModal()">Annuler</button>
-        <button type="submit" class="btn btn-primary">Créer</button>
+        <button type="submit" class="btn btn-primary">Creer</button>
       </div>
     </form>
   </div>
@@ -521,7 +427,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const API = '';
+const API = "";
 let currentUser = null;
 let currentScanId = null;
 let currentIncidentId = null;
@@ -531,1295 +437,727 @@ let currentEbiosId = null;
 let allLogGroups = [];
 let selectedLogGroup = null;
 
-// ── Auth ──────────────────────────────────────────────────────────────────
-const token = localStorage.getItem('cso_token');
-if (!token) window.location.href = '/ui/index.html';
+const token = localStorage.getItem("cso_token");
+if (!token) window.location.href = "/ui/index.html";
 
-function auth() { return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }; }
-function authNoct() { return { 'Authorization': `Bearer ${token}` }; }
-function logout() { localStorage.removeItem('cso_token'); window.location.href = '/ui/index.html'; }
+function auth() { return { "Authorization": "Bearer " + token, "Content-Type": "application/json" }; }
+function authNoct() { return { "Authorization": "Bearer " + token }; }
+function logout() { localStorage.removeItem("cso_token"); window.location.href = "/ui/index.html"; }
 
-// ── Toast ─────────────────────────────────────────────────────────────────
-function toast(msg, type = 'success') {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = `toast ${type}`; el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 3500);
+function toast(msg, type) {
+  type = type || "success";
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.className = "toast " + type; el.style.display = "block";
+  setTimeout(function() { el.style.display = "none"; }, 3500);
 }
 
-// ── PDF Export ────────────────────────────────────────────────────────────
 async function downloadPdf(url, filename) {
   try {
     const res = await fetch(API + url, { headers: authNoct() });
-    if (!res.ok) { toast('Erreur export PDF', 'error'); return; }
+    if (!res.ok) { toast("Erreur export PDF", "error"); return; }
     const blob = await res.blob();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
-  } catch(e) { toast('Erreur export PDF : ' + e.message, 'error'); }
+  } catch(e) { toast("Erreur PDF : " + e.message, "error"); }
 }
 
-function exportScanPdf() {
-  if (!currentScanId) return;
-  downloadPdf(`/export/pdf/scan/${currentScanId}`, `scan-${currentScanId}.pdf`);
-}
-function exportIncidentPdf() {
-  if (!currentIncidentId) return;
-  downloadPdf(`/export/pdf/incident/${currentIncidentId}`, `incident-${currentIncidentId}.pdf`);
-}
-function exportReportPdf() {
-  if (!currentReportId) return;
-  downloadPdf(`/export/pdf/report/${currentReportId}`, `report-${currentReportId}.pdf`);
-}
-function exportMobilePdf() {
-  if (!currentMobileScanId) return;
-  downloadPdf(`/export/pdf/mobile-scan/${currentMobileScanId}`, `mobile-scan-${currentMobileScanId}.pdf`);
-}
-function exportEbiosPdf() {
-  if (!currentEbiosId) return;
-  downloadPdf(`/export/pdf/ebios/${currentEbiosId}`, `ebios-${currentEbiosId}.pdf`);
-}
+function exportScanPdf() { if (currentScanId) downloadPdf("/export/pdf/scan/" + currentScanId, "scan-" + currentScanId + ".pdf"); }
+function exportIncidentPdf() { if (currentIncidentId) downloadPdf("/export/pdf/incident/" + currentIncidentId, "incident-" + currentIncidentId + ".pdf"); }
+function exportReportPdf() { if (currentReportId) downloadPdf("/export/pdf/report/" + currentReportId, "report-" + currentReportId + ".pdf"); }
+function exportMobilePdf() { if (currentMobileScanId) downloadPdf("/export/pdf/mobile-scan/" + currentMobileScanId, "mobile-scan-" + currentMobileScanId + ".pdf"); }
+function exportEbiosPdf() { if (currentEbiosId) downloadPdf("/export/pdf/ebios/" + currentEbiosId, "ebios-" + currentEbiosId + ".pdf"); }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────
-document.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
+document.querySelectorAll(".tab").forEach(function(t) {
+  t.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(x) { x.classList.remove("active"); });
+    document.querySelectorAll(".section").forEach(function(x) { x.classList.remove("active"); });
+    t.classList.add("active");
     const name = t.dataset.tab;
-    document.getElementById(`tab-${name}`).classList.add('active');
-    if (name === 'users')     loadUsers();
-    if (name === 'scans')     loadScans();
-    if (name === 'incidents') loadIncidents();
-    if (name === 'reports')   loadReports();
-    if (name === 'mobile')    loadMobileScans();
-    if (name === 'ebios')     loadEbiosProjects();
-    if (name === 'ai')        initAI();
-    if (name === 'logs')      loadLogGroups();
+    document.getElementById("tab-" + name).classList.add("active");
+    if (name === "users") loadUsers();
+    if (name === "scans") loadScans();
+    if (name === "incidents") loadIncidents();
+    if (name === "reports") loadReports();
+    if (name === "mobile") loadMobileScans();
+    if (name === "ebios") loadEbiosProjects();
+    if (name === "ai") initAI();
+    if (name === "logs") loadLogGroups();
   });
 });
 
-// ── Profil ────────────────────────────────────────────────────────────────
 async function loadProfile() {
-  const res = await fetch(`${API}/users/me`, { headers: auth() });
+  const res = await fetch(API + "/users/me", { headers: auth() });
   if (res.status === 401) { logout(); return; }
   currentUser = await res.json();
-
-  document.getElementById('user-badge').innerHTML =
-    `<b>${esc(currentUser.email)}</b>&nbsp; ${rolePill(currentUser.role)}`;
-
-  document.getElementById('profile-content').innerHTML = `
-    <div class="kv-grid">
-      <div class="kv"><label>ID</label><p>${currentUser.id_user}</p></div>
-      <div class="kv"><label>E-mail</label><p>${esc(currentUser.email)}</p></div>
-      <div class="kv"><label>Rôle</label><p>${rolePill(currentUser.role)}</p></div>
-      <div class="kv"><label>Statut</label><p>${statusPill(currentUser.is_active)}</p></div>
-      <div class="kv"><label>Créé le</label><p>${fmtDate(currentUser.created_at)}</p></div>
-    </div>`;
-
-  if (currentUser.role === 'admin') {
-    document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+  document.getElementById("user-badge").innerHTML = "<b>" + esc(currentUser.email) + "</b> " + rolePill(currentUser.role);
+  document.getElementById("profile-content").innerHTML =
+    "<div class=\"kv-grid\">" +
+    "<div class=\"kv\"><label>ID</label><p>" + currentUser.id_user + "</p></div>" +
+    "<div class=\"kv\"><label>E-mail</label><p>" + esc(currentUser.email) + "</p></div>" +
+    "<div class=\"kv\"><label>Role</label><p>" + rolePill(currentUser.role) + "</p></div>" +
+    "<div class=\"kv\"><label>Statut</label><p>" + statusPill(currentUser.is_active) + "</p></div>" +
+    "<div class=\"kv\"><label>Cree le</label><p>" + fmtDate(currentUser.created_at) + "</p></div>" +
+    "</div>";
+  if (currentUser.role === "admin") {
+    document.querySelectorAll(".admin-only").forEach(function(el) { el.classList.remove("hidden"); });
   }
 }
 
-// ── Utilisateurs ──────────────────────────────────────────────────────────
 async function loadUsers() {
-  document.getElementById('users-tbody').innerHTML = '<tr><td colspan="6"><span class="spinner"></span></td></tr>';
-  const res = await fetch(`${API}/users/`, { headers: auth() });
+  document.getElementById("users-tbody").innerHTML = "<tr><td colspan=\"6\"><span class=\"spinner\"></span></td></tr>";
+  const res = await fetch(API + "/users/", { headers: auth() });
   const users = await res.json();
-  document.getElementById('users-tbody').innerHTML = users.map(u => `
-    <tr>
-      <td>${u.id_user}</td>
-      <td>${esc(u.email)}</td>
-      <td>${rolePill(u.role)}</td>
-      <td>${statusPill(u.is_active)}</td>
-      <td>${fmtDate(u.created_at)}</td>
-      <td>${u.id_user !== currentUser.id_user && u.is_active
-        ? `<button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id_user})">Désactiver</button>`
-        : '<span style="color:var(--muted)">—</span>'}</td>
-    </tr>`).join('');
+  document.getElementById("users-tbody").innerHTML = users.map(function(u) {
+    return "<tr><td>" + u.id_user + "</td><td>" + esc(u.email) + "</td><td>" + rolePill(u.role) + "</td><td>" + statusPill(u.is_active) + "</td><td>" + fmtDate(u.created_at) + "</td><td>" +
+      (u.id_user !== currentUser.id_user && u.is_active ? "<button class=\"btn btn-danger btn-sm\" onclick=\"deleteUser(" + u.id_user + ")\">Desactiver</button>" : "-") +
+      "</td></tr>";
+  }).join("");
 }
 
 async function deleteUser(id) {
-  if (!confirm('Désactiver cet utilisateur ?')) return;
-  const r = await fetch(`${API}/users/${id}`, { method: 'DELETE', headers: auth() });
-  if (r.status === 204) { toast('Utilisateur désactivé'); loadUsers(); }
-  else { const d = await r.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  if (!confirm("Desactiver cet utilisateur ?")) return;
+  const r = await fetch(API + "/users/" + id, { method: "DELETE", headers: auth() });
+  if (r.status === 204) { toast("Utilisateur desactive"); loadUsers(); }
+  else { const d = await r.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 }
 
-document.getElementById('create-form').addEventListener('submit', async e => {
+document.getElementById("create-form").addEventListener("submit", async function(e) {
   e.preventDefault();
-  const r = await fetch(`${API}/users/`, {
-    method: 'POST', headers: auth(),
-    body: JSON.stringify({ email: document.getElementById('new-email').value.trim(),
-      password: document.getElementById('new-password').value,
-      role_id: parseInt(document.getElementById('new-role').value) }),
+  const r = await fetch(API + "/users/", {
+    method: "POST", headers: auth(),
+    body: JSON.stringify({ email: document.getElementById("new-email").value.trim(), password: document.getElementById("new-password").value, role_id: parseInt(document.getElementById("new-role").value) }),
   });
-  if (r.status === 201) { toast('Utilisateur créé'); e.target.reset(); loadUsers(); }
-  else { const d = await r.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  if (r.status === 201) { toast("Utilisateur cree"); e.target.reset(); loadUsers(); }
+  else { const d = await r.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 });
 
-// ── Scans ─────────────────────────────────────────────────────────────────
 async function loadScans() {
-  document.getElementById('scans-content').innerHTML = '<span class="spinner"></span>';
-  const res = await fetch(`${API}/scans/`, { headers: auth() });
+  document.getElementById("scans-content").innerHTML = "<span class=\"spinner\"></span>";
+  const res = await fetch(API + "/scans/", { headers: auth() });
   const scans = await res.json();
-
-  if (!scans.length) {
-    document.getElementById('scans-content').innerHTML = `<div class="empty">Aucun scan — les résultats apparaissent ici après chaque push CI.</div>`;
-    return;
-  }
-
-  const totCrit = scans.reduce((a,s) => a + s.critical_count, 0);
-  const totHigh = scans.reduce((a,s) => a + s.high_count, 0);
-  const passed  = scans.filter(s => s.status === 'passed').length;
-
-  document.getElementById('scans-content').innerHTML = `
-    <div class="stat-grid" style="margin-bottom:1rem">
-      <div class="stat"><div class="val val-crit">${totCrit}</div><div class="lbl">Critical (total)</div></div>
-      <div class="stat"><div class="val val-high">${totHigh}</div><div class="lbl">High (total)</div></div>
-      <div class="stat"><div class="val val-pass">${passed}/${scans.length}</div><div class="lbl">Scans passés</div></div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Image</th><th>Tag / SHA</th><th>Critical</th><th>High</th><th>Medium</th><th>Low</th><th>Statut</th><th>Date</th><th></th></tr></thead>
-        <tbody>${scans.map(s => `
-          <tr>
-            <td>${s.id_scan}</td>
-            <td><code style="font-size:.78rem">${esc(s.image_name)}</code></td>
-            <td style="font-size:.78rem;color:var(--muted)">${esc(s.image_tag)}${s.git_sha ? ` <code>${s.git_sha.slice(0,7)}</code>` : ''}</td>
-            <td><span class="val-crit">${s.critical_count}</span></td>
-            <td><span class="val-high">${s.high_count}</span></td>
-            <td><span class="val-med">${s.medium_count}</span></td>
-            <td><span class="val-low">${s.low_count}</span></td>
-            <td><span class="pill pill-${s.status}">${s.status}</span></td>
-            <td style="font-size:.78rem;color:var(--muted)">${fmtDate(s.scanned_at)}</td>
-            <td><button class="btn btn-outline btn-sm" onclick="loadScanDetail(${s.id_scan})">Détails →</button></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>`;
+  if (!scans.length) { document.getElementById("scans-content").innerHTML = "<div class=\"empty\">Aucun scan - les resultats apparaissent apres chaque push CI.</div>"; return; }
+  const totCrit = scans.reduce(function(a,s){return a+s.critical_count;}, 0);
+  const totHigh = scans.reduce(function(a,s){return a+s.high_count;}, 0);
+  const passed = scans.filter(function(s){return s.status==="passed";}).length;
+  document.getElementById("scans-content").innerHTML =
+    "<div class=\"stat-grid\" style=\"margin-bottom:1rem\">" +
+    "<div class=\"stat\"><div class=\"val val-crit\">" + totCrit + "</div><div class=\"lbl\">Critical</div></div>" +
+    "<div class=\"stat\"><div class=\"val val-high\">" + totHigh + "</div><div class=\"lbl\">High</div></div>" +
+    "<div class=\"stat\"><div class=\"val val-pass\">" + passed + "/" + scans.length + "</div><div class=\"lbl\">Passes</div></div>" +
+    "</div><div class=\"table-wrap\"><table><thead><tr><th>#</th><th>Image</th><th>Tag</th><th>Crit</th><th>High</th><th>Med</th><th>Low</th><th>Statut</th><th>Date</th><th></th></tr></thead><tbody>" +
+    scans.map(function(s) {
+      return "<tr><td>" + s.id_scan + "</td><td><code style=\"font-size:.78rem\">" + esc(s.image_name) + "</code></td><td style=\"font-size:.78rem;color:var(--muted)\">" + esc(s.image_tag) + "</td>" +
+        "<td><span class=\"val-crit\">" + s.critical_count + "</span></td><td><span class=\"val-high\">" + s.high_count + "</span></td>" +
+        "<td><span class=\"val-med\">" + s.medium_count + "</span></td><td><span class=\"val-low\">" + s.low_count + "</span></td>" +
+        "<td><span class=\"pill pill-" + s.status + "\">" + s.status + "</span></td>" +
+        "<td style=\"font-size:.78rem;color:var(--muted)\">" + fmtDate(s.scanned_at) + "</td>" +
+        "<td><button class=\"btn btn-outline btn-sm\" onclick=\"loadScanDetail(" + s.id_scan + ")\">Details</button></td></tr>";
+    }).join("") + "</tbody></table></div>";
 }
 
 async function loadScanDetail(id) {
   currentScanId = id;
-  document.getElementById('scan-detail-card').classList.remove('hidden');
-  document.getElementById('scan-detail-content').innerHTML = '<span class="spinner"></span>';
-  const res = await fetch(`${API}/scans/${id}`, { headers: auth() });
+  document.getElementById("scan-detail-card").classList.remove("hidden");
+  document.getElementById("scan-detail-content").innerHTML = "<span class=\"spinner\"></span>";
+  const res = await fetch(API + "/scans/" + id, { headers: auth() });
   const s = await res.json();
-  document.getElementById('scan-detail-title').textContent = `${s.image_name}:${s.image_tag} — ${s.vulnerabilities.length} CVE`;
-
-  const rows = s.vulnerabilities.map(v => `
-    <tr>
-      <td><code style="font-size:.78rem">${esc(v.id)}</code></td>
-      <td>${esc(v.package)}</td>
-      <td style="font-size:.78rem">${esc(v.installed_version)}</td>
-      <td style="font-size:.78rem;color:#3fb950">${v.fixed_version ? esc(v.fixed_version) : '—'}</td>
-      <td><span class="pill pill-${v.severity.toLowerCase()}">${v.severity}</span></td>
-      <td style="font-size:.78rem;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.title || '')}</td>
-    </tr>`).join('');
-
-  document.getElementById('scan-detail-content').innerHTML = rows.length
-    ? `<div class="table-wrap"><table>
-        <thead><tr><th>CVE</th><th>Package</th><th>Installé</th><th>Corrigé en</th><th>Sévérité</th><th>Titre</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table></div>`
-    : `<div class="empty">✅ Aucune vulnérabilité détectée</div>`;
-
-  document.getElementById('scan-detail-card').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById("scan-detail-title").textContent = s.image_name + ":" + s.image_tag + " - " + s.vulnerabilities.length + " CVE";
+  const rows = s.vulnerabilities.map(function(v) {
+    return "<tr><td><code style=\"font-size:.78rem\">" + esc(v.id) + "</code></td><td>" + esc(v.package) + "</td>" +
+      "<td style=\"font-size:.78rem\">" + esc(v.installed_version) + "</td>" +
+      "<td style=\"font-size:.78rem;color:#3fb950\">" + (v.fixed_version ? esc(v.fixed_version) : "-") + "</td>" +
+      "<td><span class=\"pill pill-" + v.severity.toLowerCase() + "\">" + v.severity + "</span></td>" +
+      "<td style=\"font-size:.78rem;color:var(--muted);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">" + esc(v.title || "") + "</td></tr>";
+  }).join("");
+  document.getElementById("scan-detail-content").innerHTML = rows.length
+    ? "<div class=\"table-wrap\"><table><thead><tr><th>CVE</th><th>Package</th><th>Installe</th><th>Corrige en</th><th>Severite</th><th>Titre</th></tr></thead><tbody>" + rows + "</tbody></table></div>"
+    : "<div class=\"empty\">Aucune vulnerabilite detectee</div>";
+  document.getElementById("scan-detail-card").scrollIntoView({ behavior: "smooth" });
 }
 
-function closeScanDetail() {
-  document.getElementById('scan-detail-card').classList.add('hidden');
-  currentScanId = null;
-}
+function closeScanDetail() { document.getElementById("scan-detail-card").classList.add("hidden"); currentScanId = null; }
+async function analyzeScanWithAI() { if (!currentScanId) return; switchToAITab(); await streamAnalyze("/ai/analyze/scan/" + currentScanId, "Analyse du scan #" + currentScanId); }
 
-async function analyzeScanWithAI() {
-  if (!currentScanId) return;
-  switchToAITab();
-  await streamAnalyze(`/ai/analyze/scan/${currentScanId}`, `Analyse du scan #${currentScanId}`);
-}
-
-// ── Incidents ─────────────────────────────────────────────────────────────
 async function loadIncidents() {
-  document.getElementById('incidents-content').innerHTML = '<span class="spinner"></span>';
-  const res = await fetch(`${API}/incidents/`, { headers: auth() });
+  document.getElementById("incidents-content").innerHTML = "<span class=\"spinner\"></span>";
+  const res = await fetch(API + "/incidents/", { headers: auth() });
   const incidents = await res.json();
-
-  if (!incidents.length) {
-    document.getElementById('incidents-content').innerHTML = `<div class="empty">Aucun incident. Utilisez "Simuler compromission IAM" pour en créer un.</div>`;
-    return;
-  }
-
-  document.getElementById('incidents-content').innerHTML = `
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Type</th><th>Titre</th><th>Sévérité</th><th>Statut</th><th>Ressource</th><th>Date</th><th></th></tr></thead>
-        <tbody>${incidents.map(i => `
-          <tr>
-            <td>${i.id_incident}</td>
-            <td style="font-size:.78rem;color:var(--muted)">${esc(i.type)}</td>
-            <td>${esc(i.title)}</td>
-            <td><span class="pill pill-${i.severity}">${i.severity}</span></td>
-            <td>
-              <select class="btn btn-sm" style="border:1px solid var(--border);background:var(--surface2);color:var(--text)"
-                onchange="updateIncidentStatus(${i.id_incident}, this.value)">
-                ${['open','investigating','resolved'].map(s =>
-                  `<option value="${s}" ${s===i.status?'selected':''}>${s}</option>`).join('')}
-              </select>
-            </td>
-            <td style="font-size:.78rem;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.affected_resource||'—')}</td>
-            <td style="font-size:.78rem;color:var(--muted)">${fmtDate(i.created_at)}</td>
-            <td><button class="btn btn-outline btn-sm" onclick="showIncidentDetail(${i.id_incident})">Détails →</button></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>`;
+  if (!incidents.length) { document.getElementById("incidents-content").innerHTML = "<div class=\"empty\">Aucun incident. Utilisez Simuler pour en creer un.</div>"; return; }
+  document.getElementById("incidents-content").innerHTML =
+    "<div class=\"table-wrap\"><table><thead><tr><th>#</th><th>Type</th><th>Titre</th><th>Severite</th><th>Statut</th><th>Ressource</th><th>Date</th><th></th></tr></thead><tbody>" +
+    incidents.map(function(i) {
+      return "<tr><td>" + i.id_incident + "</td><td style=\"font-size:.78rem;color:var(--muted)\">" + esc(i.type) + "</td><td>" + esc(i.title) + "</td>" +
+        "<td><span class=\"pill pill-" + i.severity + "\">" + i.severity + "</span></td>" +
+        "<td><select class=\"btn btn-sm\" style=\"border:1px solid var(--border);background:var(--surface2);color:var(--text)\" onchange=\"updateIncidentStatus(" + i.id_incident + ", this.value)\">" +
+        ["open","investigating","resolved"].map(function(s){return "<option value=\""+s+"\" "+(s===i.status?"selected":"")+">"+s+"</option>";}).join("") + "</select></td>" +
+        "<td style=\"font-size:.78rem;color:var(--muted);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">" + esc(i.affected_resource||"-") + "</td>" +
+        "<td style=\"font-size:.78rem;color:var(--muted)\">" + fmtDate(i.created_at) + "</td>" +
+        "<td><button class=\"btn btn-outline btn-sm\" onclick=\"showIncidentDetail(" + i.id_incident + ")\">Details</button></td></tr>";
+    }).join("") + "</tbody></table></div>";
 }
 
 async function simulateIAM() {
-  const btn = document.getElementById('simulate-btn');
-  btn.disabled = true; btn.textContent = '⏳ Simulation…';
-  const res = await fetch(`${API}/incidents/simulate/iam`, { method: 'POST', headers: auth() });
-  btn.disabled = false; btn.textContent = '⚡ Simuler compromission IAM';
-  if (res.status === 201) { toast('Incident créé — compromission IAM simulée'); loadIncidents(); }
-  else { const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  const btn = document.getElementById("simulate-btn");
+  btn.disabled = true; btn.textContent = "Simulation...";
+  const res = await fetch(API + "/incidents/simulate/iam", { method: "POST", headers: auth() });
+  btn.disabled = false; btn.textContent = "Simuler compromission IAM";
+  if (res.status === 201) { toast("Incident cree - compromission IAM simulee"); loadIncidents(); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 }
 
 async function updateIncidentStatus(id, status) {
-  const res = await fetch(`${API}/incidents/${id}/status`, {
-    method: 'PATCH', headers: auth(), body: JSON.stringify({ status }),
-  });
-  if (res.ok) toast(`Statut → ${status}`);
-  else toast('Erreur mise à jour', 'error');
+  const res = await fetch(API + "/incidents/" + id + "/status", { method: "PATCH", headers: auth(), body: JSON.stringify({ status: status }) });
+  if (res.ok) toast("Statut -> " + status);
+  else toast("Erreur mise a jour", "error");
 }
 
 async function showIncidentDetail(id) {
   currentIncidentId = id;
-  const res = await fetch(`${API}/incidents/${id}`, { headers: auth() });
+  const res = await fetch(API + "/incidents/" + id, { headers: auth() });
   const inc = await res.json();
-
-  document.getElementById('incident-detail-card').classList.remove('hidden');
-  document.getElementById('incident-detail-title').textContent = inc.title;
-
-  const timelineHtml = (inc.timeline || []).map(e => `
-    <div class="timeline-item">
-      <div class="tl-ts">${fmtDate(e.ts)}</div>
-      <div class="tl-body">
-        <div class="event">${esc(e.event)}</div>
-        ${e.detail ? `<div class="detail">${esc(e.detail)}</div>` : ''}
-      </div>
-    </div>`).join('');
-
-  const iocHtml = (inc.ioc || []).map(i => `
-    <tr>
-      <td class="ioc-type">${esc(i.type)}</td>
-      <td><code style="font-size:.8rem">${esc(i.value)}</code></td>
-      <td style="font-size:.8rem;color:var(--muted)">${esc(i.context||'')}</td>
-    </tr>`).join('');
-
-  document.getElementById('incident-detail-content').innerHTML = `
-    <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem">${esc(inc.description||'')}</p>
-    ${timelineHtml ? `<div class="detail-panel"><h4>Chronologie</h4>${timelineHtml}</div>` : ''}
-    ${iocHtml ? `<div class="detail-panel" style="margin-top:.75rem"><h4>Indicateurs de compromission (IOC)</h4>
-      <table class="ioc-table"><thead><tr><th>Type</th><th>Valeur</th><th>Contexte</th></tr></thead>
-      <tbody>${iocHtml}</tbody></table></div>` : ''}`;
-
-  document.getElementById('incident-detail-card').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById("incident-detail-card").classList.remove("hidden");
+  document.getElementById("incident-detail-title").textContent = inc.title;
+  const timelineHtml = (inc.timeline || []).map(function(e) {
+    return "<div class=\"timeline-item\"><div class=\"tl-ts\">" + fmtDate(e.ts) + "</div><div class=\"tl-body\"><div class=\"event\">" + esc(e.event) + "</div>" + (e.detail ? "<div class=\"detail\">" + esc(e.detail) + "</div>" : "") + "</div></div>";
+  }).join("");
+  const iocHtml = (inc.ioc || []).map(function(i) {
+    return "<tr><td class=\"ioc-type\">" + esc(i.type) + "</td><td><code style=\"font-size:.8rem\">" + esc(i.value) + "</code></td><td style=\"font-size:.8rem;color:var(--muted)\">" + esc(i.context||"") + "</td></tr>";
+  }).join("");
+  document.getElementById("incident-detail-content").innerHTML =
+    "<p style=\"font-size:.88rem;color:var(--muted);margin-bottom:1rem\">" + esc(inc.description||"") + "</p>" +
+    (timelineHtml ? "<div class=\"detail-panel\"><h4>Chronologie</h4>" + timelineHtml + "</div>" : "") +
+    (iocHtml ? "<div class=\"detail-panel\" style=\"margin-top:.75rem\"><h4>IOC</h4><table class=\"ioc-table\"><thead><tr><th>Type</th><th>Valeur</th><th>Contexte</th></tr></thead><tbody>" + iocHtml + "</tbody></table></div>" : "");
+  document.getElementById("incident-detail-card").scrollIntoView({ behavior: "smooth" });
 }
 
-function closeIncidentDetail() {
-  document.getElementById('incident-detail-card').classList.add('hidden');
-  currentIncidentId = null;
-}
+function closeIncidentDetail() { document.getElementById("incident-detail-card").classList.add("hidden"); currentIncidentId = null; }
+async function analyzeIncidentWithAI() { if (!currentIncidentId) return; switchToAITab(); await streamAnalyze("/ai/analyze/incident/" + currentIncidentId, "Analyse incident #" + currentIncidentId); }
 
-async function analyzeIncidentWithAI() {
-  if (!currentIncidentId) return;
-  switchToAITab();
-  await streamAnalyze(`/ai/analyze/incident/${currentIncidentId}`, `Analyse de l'incident #${currentIncidentId}`);
-}
-
-// ── Rapports ──────────────────────────────────────────────────────────────
 async function loadReports() {
-  document.getElementById('reports-content').innerHTML = '<span class="spinner"></span>';
-  const res = await fetch(`${API}/reports/`, { headers: auth() });
+  document.getElementById("reports-content").innerHTML = "<span class=\"spinner\"></span>";
+  const res = await fetch(API + "/reports/", { headers: auth() });
   const reports = await res.json();
-
-  if (!reports.length) {
-    document.getElementById('reports-content').innerHTML = `<div class="empty">Aucun rapport — créez un rapport après une investigation.</div>`;
-    return;
-  }
-
-  document.getElementById('reports-content').innerHTML = `
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>Titre</th><th>Statut</th><th>Incident</th><th>Auteur ID</th><th>Date</th><th></th></tr></thead>
-        <tbody>${reports.map(r => `
-          <tr>
-            <td>${r.id_report}</td>
-            <td>${esc(r.title)}</td>
-            <td><span class="pill pill-${r.status}">${r.status}</span></td>
-            <td>${r.id_incident ? `#${r.id_incident}` : '—'}</td>
-            <td>${r.id_author || '—'}</td>
-            <td style="font-size:.78rem;color:var(--muted)">${fmtDate(r.created_at)}</td>
-            <td style="display:flex;gap:.4rem">
-              <button class="btn btn-outline btn-sm" onclick="showReportDetail(${r.id_report})">Lire →</button>
-              ${r.status==='draft'?`<button class="btn btn-accent btn-sm" onclick="finalizeReport(${r.id_report})">Finaliser</button>`:''}
-            </td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>`;
+  if (!reports.length) { document.getElementById("reports-content").innerHTML = "<div class=\"empty\">Aucun rapport.</div>"; return; }
+  document.getElementById("reports-content").innerHTML =
+    "<div class=\"table-wrap\"><table><thead><tr><th>#</th><th>Titre</th><th>Statut</th><th>Incident</th><th>Auteur</th><th>Date</th><th></th></tr></thead><tbody>" +
+    reports.map(function(r) {
+      return "<tr><td>" + r.id_report + "</td><td>" + esc(r.title) + "</td><td><span class=\"pill pill-" + r.status + "\">" + r.status + "</span></td>" +
+        "<td>" + (r.id_incident ? "#" + r.id_incident : "-") + "</td><td>" + (r.id_author||"-") + "</td><td style=\"font-size:.78rem;color:var(--muted)\">" + fmtDate(r.created_at) + "</td>" +
+        "<td style=\"display:flex;gap:.4rem\"><button class=\"btn btn-outline btn-sm\" onclick=\"showReportDetail(" + r.id_report + ")\">Lire</button>" +
+        (r.status==="draft" ? "<button class=\"btn btn-accent btn-sm\" onclick=\"finalizeReport(" + r.id_report + ")\">Finaliser</button>" : "") + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
 }
 
 async function showReportDetail(id) {
   currentReportId = id;
-  const res = await fetch(`${API}/reports/${id}`, { headers: auth() });
+  const res = await fetch(API + "/reports/" + id, { headers: auth() });
   const r = await res.json();
-  document.getElementById('report-detail-card').classList.remove('hidden');
-  document.getElementById('report-detail-title').textContent = r.title;
-
-  const findings = (r.findings || []).map(f => `
-    <div style="padding:.6rem 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem">
-        <span class="pill pill-${(f.severity||'').toLowerCase()}">${f.severity}</span>
-        <strong style="font-size:.88rem">${esc(f.title)}</strong>
-      </div>
-      <p style="font-size:.83rem;color:var(--muted)">${esc(f.description)}</p>
-      ${f.evidence ? `<p style="font-size:.8rem;color:var(--accent);margin-top:.2rem">Preuve : ${esc(f.evidence)}</p>` : ''}
-    </div>`).join('');
-
-  const recs = (r.recommendations || []).map(rec => `
-    <div style="padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:start">
-      <span class="pill pill-${rec.priority==='immediate'?'critical':rec.priority==='short_term'?'high':'low'}" style="white-space:nowrap">${rec.priority}</span>
-      <div>
-        <div style="font-size:.87rem">${esc(rec.action)}</div>
-        ${rec.owner?`<div style="font-size:.78rem;color:var(--muted)">Responsable : ${esc(rec.owner)}</div>`:''}
-      </div>
-    </div>`).join('');
-
-  document.getElementById('report-detail-content').innerHTML = `
-    <div class="detail-panel">
-      <h4>Résumé exécutif</h4>
-      <p style="font-size:.88rem;line-height:1.6;margin-top:.5rem">${esc(r.executive_summary)}</p>
-    </div>
-    ${findings ? `<div class="detail-panel" style="margin-top:.75rem"><h4>Constatations (${r.findings.length})</h4>${findings}</div>` : ''}
-    ${recs ? `<div class="detail-panel" style="margin-top:.75rem"><h4>Recommandations (${r.recommendations.length})</h4>${recs}</div>` : ''}`;
-
-  document.getElementById('report-detail-card').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById("report-detail-card").classList.remove("hidden");
+  document.getElementById("report-detail-title").textContent = r.title;
+  const findings = (r.findings||[]).map(function(f) {
+    return "<div style=\"padding:.6rem 0;border-bottom:1px solid var(--border)\"><div style=\"display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem\"><span class=\"pill pill-" + (f.severity||"").toLowerCase() + "\">" + f.severity + "</span><strong style=\"font-size:.88rem\">" + esc(f.title) + "</strong></div><p style=\"font-size:.83rem;color:var(--muted)\">" + esc(f.description) + "</p></div>";
+  }).join("");
+  const recs = (r.recommendations||[]).map(function(rec) {
+    return "<div style=\"padding:.5rem 0;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:start\"><span class=\"pill pill-" + (rec.priority==="immediate"?"critical":rec.priority==="short_term"?"high":"low") + "\" style=\"white-space:nowrap\">" + rec.priority + "</span><div><div style=\"font-size:.87rem\">" + esc(rec.action) + "</div>" + (rec.owner ? "<div style=\"font-size:.78rem;color:var(--muted)\">Responsable : " + esc(rec.owner) + "</div>" : "") + "</div></div>";
+  }).join("");
+  document.getElementById("report-detail-content").innerHTML =
+    "<div class=\"detail-panel\"><h4>Resume executif</h4><p style=\"font-size:.88rem;line-height:1.6;margin-top:.5rem\">" + esc(r.executive_summary) + "</p></div>" +
+    (findings ? "<div class=\"detail-panel\" style=\"margin-top:.75rem\"><h4>Constatations</h4>" + findings + "</div>" : "") +
+    (recs ? "<div class=\"detail-panel\" style=\"margin-top:.75rem\"><h4>Recommandations</h4>" + recs + "</div>" : "");
+  document.getElementById("report-detail-card").scrollIntoView({ behavior: "smooth" });
 }
 
-function closeReportDetail() {
-  document.getElementById('report-detail-card').classList.add('hidden');
-  currentReportId = null;
-}
+function closeReportDetail() { document.getElementById("report-detail-card").classList.add("hidden"); currentReportId = null; }
 
 async function finalizeReport(id) {
-  const r = await fetch(`${API}/reports/${id}/finalize`, { method: 'PATCH', headers: auth() });
-  if (r.ok) { toast('Rapport finalisé'); loadReports(); }
-  else toast('Erreur', 'error');
+  const r = await fetch(API + "/reports/" + id + "/finalize", { method: "PATCH", headers: auth() });
+  if (r.ok) { toast("Rapport finalise"); loadReports(); }
+  else toast("Erreur", "error");
 }
 
-function openReportModal() { document.getElementById('report-modal').classList.add('open'); }
-function closeReportModal() { document.getElementById('report-modal').classList.remove('open'); }
+function openReportModal() { document.getElementById("report-modal").classList.add("open"); }
+function closeReportModal() { document.getElementById("report-modal").classList.remove("open"); }
 
-document.getElementById('report-form').addEventListener('submit', async e => {
+document.getElementById("report-form").addEventListener("submit", async function(e) {
   e.preventDefault();
-
-  const parseFindings = txt => txt.trim().split('\n').filter(Boolean).map(line => {
-    const [severity, title, ...rest] = line.split('|');
-    return { severity: severity.trim(), title: title?.trim() || '', description: rest.join('|').trim() };
-  });
-
-  const parseRecs = txt => txt.trim().split('\n').filter(Boolean).map(line => {
-    const [priority, action, owner] = line.split('|');
-    return { priority: priority.trim(), action: action?.trim() || '', owner: owner?.trim() || null };
-  });
-
+  function parseLines(txt, fn) { return txt.trim().split("\n").filter(Boolean).map(fn); }
   const body = {
-    title: document.getElementById('r-title').value.trim(),
-    id_incident: document.getElementById('r-incident').value ? parseInt(document.getElementById('r-incident').value) : null,
-    executive_summary: document.getElementById('r-summary').value.trim(),
-    findings: parseFindings(document.getElementById('r-findings').value),
-    recommendations: parseRecs(document.getElementById('r-recs').value),
-    status: document.getElementById('r-status').value,
+    title: document.getElementById("r-title").value.trim(),
+    id_incident: document.getElementById("r-incident").value ? parseInt(document.getElementById("r-incident").value) : null,
+    executive_summary: document.getElementById("r-summary").value.trim(),
+    findings: parseLines(document.getElementById("r-findings").value, function(line) {
+      const p = line.split("|"); return { severity: p[0].trim(), title: (p[1]||"").trim(), description: p.slice(2).join("|").trim() };
+    }),
+    recommendations: parseLines(document.getElementById("r-recs").value, function(line) {
+      const p = line.split("|"); return { priority: p[0].trim(), action: (p[1]||"").trim(), owner: p[2] ? p[2].trim() : null };
+    }),
+    status: document.getElementById("r-status").value,
   };
-
-  const res = await fetch(`${API}/reports/`, { method: 'POST', headers: auth(), body: JSON.stringify(body) });
-  if (res.status === 201) {
-    toast('Rapport créé'); closeReportModal(); e.target.reset(); loadReports();
-  } else {
-    const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur création', 'error');
-  }
+  const res = await fetch(API + "/reports/", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+  if (res.status === 201) { toast("Rapport cree"); closeReportModal(); e.target.reset(); loadReports(); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 });
 
-// ── Scan Mobile ───────────────────────────────────────────────────────────
-const dropZone = document.getElementById('apk-drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault();
-  dropZone.classList.remove('drag-over');
+async function scanFromUrl() {
+  const url = document.getElementById("playstore-url-input").value.trim();
+  const statusEl = document.getElementById("url-scan-status");
+  if (!url) { statusEl.innerHTML = "<span style=\"color:var(--red-h)\">URL requise</span>"; return; }
+  statusEl.innerHTML = "<span class=\"spinner\"></span> Analyse en cours...";
+  try {
+    const res = await fetch(API + "/mobile-scans/scan-url", {
+      method: "POST", headers: auth(), body: JSON.stringify({ url: url }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Erreur");
+    statusEl.innerHTML = "<span style=\"color:#3fb950\">Scan lance - ID #" + data.id_scan + "</span>";
+    document.getElementById("playstore-url-input").value = "";
+    setTimeout(function() { statusEl.innerHTML = ""; loadMobileScans(); }, 2000);
+  } catch(e) {
+    statusEl.innerHTML = "<span style=\"color:var(--red-h)\">" + esc(e.message) + "</span>";
+  }
+}
+
+const dropZone = document.getElementById("apk-drop-zone");
+dropZone.addEventListener("dragover", function(e) { e.preventDefault(); dropZone.classList.add("drag-over"); });
+dropZone.addEventListener("dragleave", function() { dropZone.classList.remove("drag-over"); });
+dropZone.addEventListener("drop", function(e) {
+  e.preventDefault(); dropZone.classList.remove("drag-over");
   const file = e.dataTransfer.files[0];
-  if (file && file.name.endsWith('.apk')) handleApkSelect(file);
-  else toast('Fichier invalide — sélectionnez un .apk', 'error');
+  if (file && file.name.endsWith(".apk")) handleApkSelect(file);
+  else toast("Fichier invalide - selectionnez un .apk", "error");
 });
 
 async function handleApkSelect(file) {
   if (!file) return;
-  const statusEl = document.getElementById('apk-upload-status');
-  statusEl.innerHTML = `<span class="spinner"></span> Envoi de <strong>${esc(file.name)}</strong> en cours…`;
-
+  const statusEl = document.getElementById("apk-upload-status");
+  statusEl.innerHTML = "<span class=\"spinner\"></span> Envoi de <strong>" + esc(file.name) + "</strong>...";
   const formData = new FormData();
-  formData.append('file', file);
-
+  formData.append("file", file);
   try {
-    const res = await fetch(`${API}/mobile-scans/`, {
-      method: 'POST',
-      headers: authNoct(),
-      body: formData,
-    });
+    const res = await fetch(API + "/mobile-scans/", { method: "POST", headers: authNoct(), body: formData });
     if (res.status === 201 || res.ok) {
-      statusEl.innerHTML = `<span style="color:#3fb950">✅ APK soumis — le scan est en cours…</span>`;
-      toast('APK soumis, scan en cours');
-      document.getElementById('apk-file-input').value = '';
-      setTimeout(() => { statusEl.innerHTML = ''; loadMobileScans(); }, 2000);
+      statusEl.innerHTML = "<span style=\"color:#3fb950\">APK soumis - scan en cours...</span>";
+      toast("APK soumis");
+      document.getElementById("apk-file-input").value = "";
+      setTimeout(function() { statusEl.innerHTML = ""; loadMobileScans(); }, 2000);
     } else {
-      const d = await res.json().catch(()=>{});
-      statusEl.innerHTML = `<span style="color:var(--red-h)">❌ Erreur : ${esc(d?.detail || 'Échec envoi')}</span>`;
-      toast(d?.detail || 'Erreur envoi APK', 'error');
+      const d = await res.json().catch(function(){return{};});
+      statusEl.innerHTML = "<span style=\"color:var(--red-h)\">Erreur : " + esc(d.detail || "Echec") + "</span>";
+      toast(d.detail || "Erreur envoi APK", "error");
     }
   } catch(e) {
-    statusEl.innerHTML = `<span style="color:var(--red-h)">❌ Erreur réseau</span>`;
-    toast('Erreur réseau', 'error');
+    statusEl.innerHTML = "<span style=\"color:var(--red-h)\">Erreur reseau</span>";
+    toast("Erreur reseau", "error");
   }
 }
 
 function scoreClass(score) {
-  if (score < 40) return 'score-red';
-  if (score < 70) return 'score-orange';
-  return 'score-green';
+  if (score === null || score === undefined) return "score-orange";
+  if (score < 40) return "score-red";
+  if (score < 70) return "score-orange";
+  return "score-green";
 }
-async function scanFromUrl() {
-  const url = document.getElementById('playstore-url-input').value.trim();
-  const status = document.getElementById('url-scan-status');
-  if (!url) { status.innerHTML = '<span style="color:var(--red-h)">URL requise</span>'; return; }
-  status.innerHTML = '<span class="spinner"></span> Telechargement et analyse en cours...';
-  try {
-    const res = await fetch(`${API}/mobile-scans/scan-url`, {
-      method: 'POST', headers: auth(), body: JSON.stringify({ url }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || 'Erreur');
-    status.innerHTML = `<span style="color:#3fb950">Scan lance - ID #${data.id_scan}</span>`;
-    document.getElementById('playstore-url-input').value = '';
-    setTimeout(() => { status.innerHTML = ''; loadMobileScans(); }, 2000);
-  } catch(e) {
-    status.innerHTML = `<span style="color:var(--red-h)">Erreur : ${esc(e.message)}</span>`;
-  }
-}
+
 async function loadMobileScans() {
-  document.getElementById('mobile-scans-content').innerHTML = '<span class="spinner"></span>';
+  document.getElementById("mobile-scans-content").innerHTML = "<span class=\"spinner\"></span>";
   try {
-    const res = await fetch(`${API}/mobile-scans/`, { headers: auth() });
-    if (!res.ok) throw new Error('Erreur API');
+    const res = await fetch(API + "/mobile-scans/", { headers: auth() });
+    if (!res.ok) throw new Error("Erreur API");
     const scans = await res.json();
-
-    if (!scans.length) {
-      document.getElementById('mobile-scans-content').innerHTML = `<div class="empty">Aucun scan mobile — uploadez un APK ci-dessus.</div>`;
-      return;
-    }
-
-    document.getElementById('mobile-scans-content').innerHTML = `
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>#</th><th>Application</th><th>Package</th><th>Version</th><th>Score</th><th>Critical</th><th>High</th><th>Warnings</th><th>Statut</th><th>Date</th><th></th></tr></thead>
-          <tbody>${scans.map(s => `
-            <tr>
-              <td>${s.id_scan}</td>
-              <td><strong>${esc(s.app_name || '—')}</strong></td>
-              <td style="font-size:.78rem;color:var(--muted)">${esc(s.package_name || '—')}</td>
-              <td style="font-size:.78rem">${esc(s.version || '—')}</td>
-              <td><span class="score-badge ${scoreClass(s.security_score)}">${s.security_score}/100</span></td>
-              <td><span class="val-crit">${s.critical_count}</span></td>
-              <td><span class="val-high">${s.high_count}</span></td>
-              <td><span class="val-med">${s.warning_count}</span></td>
-              <td>
-                ${s.status === 'pending'
-                  ? `<span class="pill pill-pending"><span class="spinner" style="width:10px;height:10px;border-width:1.5px"></span> pending</span>`
-                  : `<span class="pill pill-${s.status}">${s.status}</span>`}
-              </td>
-              <td style="font-size:.78rem;color:var(--muted)">${fmtDate(s.scanned_at)}</td>
-              <td>
-                ${s.status === 'completed'
-                  ? `<button class="btn btn-outline btn-sm" onclick="loadMobileScanDetail(${s.id_scan})">Détails →</button>`
-                  : '—'}
-              </td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>`;
+    if (!scans.length) { document.getElementById("mobile-scans-content").innerHTML = "<div class=\"empty\">Aucun scan mobile - entrez une URL Play Store ou uploadez un APK.</div>"; return; }
+    document.getElementById("mobile-scans-content").innerHTML =
+      "<div class=\"table-wrap\"><table><thead><tr><th>#</th><th>Application</th><th>Package</th><th>Score</th><th>Crit</th><th>High</th><th>Warn</th><th>Statut</th><th>Date</th><th></th></tr></thead><tbody>" +
+      scans.map(function(s) {
+        return "<tr><td>" + s.id_scan + "</td><td><strong>" + esc(s.app_name||"-") + "</strong></td><td style=\"font-size:.78rem;color:var(--muted)\">" + esc(s.package_name||"-") + "</td>" +
+          "<td>" + (s.security_score !== null ? "<span class=\"score-badge " + scoreClass(s.security_score) + "\">" + s.security_score + "/100</span>" : "-") + "</td>" +
+          "<td><span class=\"val-crit\">" + (s.critical_count||0) + "</span></td><td><span class=\"val-high\">" + (s.high_count||0) + "</span></td><td><span class=\"val-med\">" + (s.warning_count||0) + "</span></td>" +
+          "<td><span class=\"pill pill-" + s.status + "\">" + s.status + "</span></td>" +
+          "<td style=\"font-size:.78rem;color:var(--muted)\">" + fmtDate(s.scanned_at) + "</td>" +
+          "<td>" + (s.status === "completed" ? "<button class=\"btn btn-outline btn-sm\" onclick=\"loadMobileScanDetail(" + s.id_scan + ")\">Details</button>" : "-") + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
   } catch(e) {
-    document.getElementById('mobile-scans-content').innerHTML = `<div class="empty">Erreur chargement : ${esc(e.message)}</div>`;
+    document.getElementById("mobile-scans-content").innerHTML = "<div class=\"empty\">Erreur : " + esc(e.message) + "</div>";
   }
 }
 
 async function loadMobileScanDetail(id) {
   currentMobileScanId = id;
-  document.getElementById('mobile-detail-card').classList.remove('hidden');
-  document.getElementById('mobile-detail-content').innerHTML = '<span class="spinner"></span>';
-
-  const res = await fetch(`${API}/mobile-scans/${id}`, { headers: auth() });
+  document.getElementById("mobile-detail-card").classList.remove("hidden");
+  document.getElementById("mobile-detail-content").innerHTML = "<span class=\"spinner\"></span>";
+  const res = await fetch(API + "/mobile-scans/" + id, { headers: auth() });
   const s = await res.json();
-  document.getElementById('mobile-detail-title').textContent = `${s.app_name || s.file_name} — Score: ${s.security_score}/100`;
-
-  const permsHtml = (s.dangerous_perms || []).length
-    ? `<div class="detail-panel">
-        <h4>Permissions dangereuses (${s.dangerous_perms.length})</h4>
-        <div style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem">
-          ${s.dangerous_perms.map(p => `<span class="pill pill-high">${esc(p)}</span>`).join('')}
-        </div>
-      </div>`
-    : `<div class="detail-panel"><h4>Permissions dangereuses</h4><div class="empty" style="padding:1rem">Aucune permission dangereuse détectée</div></div>`;
-
-  const trackersHtml = (s.trackers || []).length
-    ? `<div class="detail-panel" style="margin-top:.75rem">
-        <h4>Trackers détectés (${s.trackers.length})</h4>
-        <div class="table-wrap" style="margin-top:.5rem">
-          <table>
-            <thead><tr><th>Nom</th><th>Catégorie</th><th>Site</th></tr></thead>
-            <tbody>${s.trackers.map(t => `
-              <tr>
-                <td>${esc(t.name || t)}</td>
-                <td style="color:var(--muted)">${esc(t.category || '—')}</td>
-                <td style="font-size:.78rem"><a href="${esc(t.website || '#')}" target="_blank" style="color:var(--accent)">${esc(t.website || '—')}</a></td>
-              </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>`
-    : `<div class="detail-panel" style="margin-top:.75rem"><h4>Trackers</h4><div class="empty" style="padding:1rem">Aucun tracker détecté</div></div>`;
-
-  document.getElementById('mobile-detail-content').innerHTML = `
-    <div class="stat-grid" style="margin-bottom:1rem">
-      <div class="stat"><div class="val ${scoreClass(s.security_score)}">${s.security_score}</div><div class="lbl">Score sécurité</div></div>
-      <div class="stat"><div class="val val-crit">${s.critical_count}</div><div class="lbl">Critical</div></div>
-      <div class="stat"><div class="val val-high">${s.high_count}</div><div class="lbl">High</div></div>
-      <div class="stat"><div class="val val-med">${s.warning_count}</div><div class="lbl">Warnings</div></div>
-      <div class="stat"><div class="val" style="font-size:1rem;color:var(--muted)">${esc(s.platform || '—')}</div><div class="lbl">Plateforme</div></div>
-    </div>
-    ${permsHtml}
-    ${trackersHtml}`;
-
-  document.getElementById('mobile-detail-card').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById("mobile-detail-title").textContent = (s.app_name || s.file_name) + " - Score: " + s.security_score + "/100";
+  const permsHtml = (s.dangerous_perms||[]).length
+    ? "<div class=\"detail-panel\"><h4>Permissions dangereuses (" + s.dangerous_perms.length + ")</h4><div style=\"display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem\">" + s.dangerous_perms.map(function(p){return "<span class=\"pill pill-high\">" + esc(typeof p==="object"?p.permission:p) + "</span>";}).join("") + "</div></div>"
+    : "<div class=\"detail-panel\"><h4>Permissions dangereuses</h4><div class=\"empty\" style=\"padding:1rem\">Aucune detectee</div></div>";
+  const trackersHtml = (s.trackers||[]).length
+    ? "<div class=\"detail-panel\" style=\"margin-top:.75rem\"><h4>Trackers (" + s.trackers.length + ")</h4><div class=\"table-wrap\" style=\"margin-top:.5rem\"><table><thead><tr><th>Nom</th><th>Categorie</th></tr></thead><tbody>" + s.trackers.map(function(t){return "<tr><td>" + esc(t.name||t) + "</td><td style=\"color:var(--muted)\">" + esc(t.category||"-") + "</td></tr>";}).join("") + "</tbody></table></div></div>"
+    : "<div class=\"detail-panel\" style=\"margin-top:.75rem\"><h4>Trackers</h4><div class=\"empty\" style=\"padding:1rem\">Aucun detecte</div></div>";
+  document.getElementById("mobile-detail-content").innerHTML =
+    "<div class=\"stat-grid\" style=\"margin-bottom:1rem\">" +
+    "<div class=\"stat\"><div class=\"val " + scoreClass(s.security_score) + "\">" + (s.security_score||"-") + "</div><div class=\"lbl\">Score</div></div>" +
+    "<div class=\"stat\"><div class=\"val val-crit\">" + (s.critical_count||0) + "</div><div class=\"lbl\">Critical</div></div>" +
+    "<div class=\"stat\"><div class=\"val val-high\">" + (s.high_count||0) + "</div><div class=\"lbl\">High</div></div>" +
+    "<div class=\"stat\"><div class=\"val val-med\">" + (s.warning_count||0) + "</div><div class=\"lbl\">Warnings</div></div>" +
+    "</div>" + permsHtml + trackersHtml;
+  document.getElementById("mobile-detail-card").scrollIntoView({ behavior: "smooth" });
 }
 
-function closeMobileDetail() {
-  document.getElementById('mobile-detail-card').classList.add('hidden');
-  currentMobileScanId = null;
-}
+function closeMobileDetail() { document.getElementById("mobile-detail-card").classList.add("hidden"); currentMobileScanId = null; }
 
-// ── EBIOS RM ──────────────────────────────────────────────────────────────
-function openEbiosModal() { document.getElementById('ebios-modal').classList.add('open'); }
-function closeEbiosModal() { document.getElementById('ebios-modal').classList.remove('open'); }
+function openEbiosModal() { document.getElementById("ebios-modal").classList.add("open"); }
+function closeEbiosModal() { document.getElementById("ebios-modal").classList.remove("open"); }
 
-document.getElementById('ebios-form').addEventListener('submit', async e => {
+document.getElementById("ebios-form").addEventListener("submit", async function(e) {
   e.preventDefault();
-  const body = {
-    name: document.getElementById('eb-name').value.trim(),
-    scope: document.getElementById('eb-scope').value.trim() || undefined,
-    context: document.getElementById('eb-context').value.trim() || undefined,
-  };
-  const res = await fetch(`${API}/ebios/`, { method: 'POST', headers: auth(), body: JSON.stringify(body) });
-  if (res.ok || res.status === 201) {
-    toast('Projet EBIOS créé'); closeEbiosModal(); e.target.reset(); loadEbiosProjects();
-  } else {
-    const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error');
-  }
+  const body = { name: document.getElementById("eb-name").value.trim(), scope: document.getElementById("eb-scope").value.trim() || undefined, context: document.getElementById("eb-context").value.trim() || undefined };
+  const res = await fetch(API + "/ebios/", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+  if (res.ok || res.status === 201) { toast("Projet EBIOS cree"); closeEbiosModal(); e.target.reset(); loadEbiosProjects(); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 });
 
 async function loadEbiosProjects() {
-  document.getElementById('ebios-content').innerHTML = '<span class="spinner"></span>';
+  document.getElementById("ebios-content").innerHTML = "<span class=\"spinner\"></span>";
   try {
-    const res = await fetch(`${API}/ebios/`, { headers: auth() });
-    if (!res.ok) throw new Error('Erreur API');
+    const res = await fetch(API + "/ebios/", { headers: auth() });
+    if (!res.ok) throw new Error("Erreur API");
     const projects = await res.json();
-
-    if (!projects.length) {
-      document.getElementById('ebios-content').innerHTML = `<div class="empty">Aucun projet EBIOS — cliquez "+ Nouveau projet" pour commencer.</div>`;
-      return;
-    }
-
-    document.getElementById('ebios-content').innerHTML = projects.map(p => `
-      <div class="ebios-project" id="ebios-proj-${p.id_project}">
-        <div class="ebios-project-header" onclick="toggleEbiosProject(${p.id_project})">
-          <div>
-            <strong>${esc(p.name)}</strong>
-            <span class="pill pill-${p.status || 'in_progress'}" style="margin-left:.5rem">${p.status || 'en cours'}</span>
-          </div>
-          <div style="display:flex;gap:.5rem;align-items:center">
-            <span style="font-size:.78rem;color:var(--muted)">${fmtDate(p.created_at)}</span>
-            <span style="color:var(--muted)">▼</span>
-          </div>
-        </div>
-        <div class="ebios-project-body" id="ebios-body-${p.id_project}">
-          <div id="ebios-detail-${p.id_project}"><span class="spinner"></span></div>
-        </div>
-      </div>`).join('');
-  } catch(e) {
-    document.getElementById('ebios-content').innerHTML = `<div class="empty">Erreur chargement : ${esc(e.message)}</div>`;
-  }
+    if (!projects.length) { document.getElementById("ebios-content").innerHTML = "<div class=\"empty\">Aucun projet EBIOS.</div>"; return; }
+    document.getElementById("ebios-content").innerHTML = projects.map(function(p) {
+      return "<div class=\"ebios-project\" id=\"ebios-proj-" + p.id_project + "\"><div class=\"ebios-project-header\" onclick=\"toggleEbiosProject(" + p.id_project + ")\"><div><strong>" + esc(p.name) + "</strong> <span class=\"pill pill-" + (p.status||"in_progress") + "\" style=\"margin-left:.5rem\">" + (p.status||"en cours") + "</span></div><span style=\"font-size:.78rem;color:var(--muted)\">" + fmtDate(p.created_at) + "</span></div><div class=\"ebios-project-body\" id=\"ebios-body-" + p.id_project + "\"><div id=\"ebios-detail-" + p.id_project + "\"><span class=\"spinner\"></span></div></div></div>";
+    }).join("");
+  } catch(e) { document.getElementById("ebios-content").innerHTML = "<div class=\"empty\">Erreur : " + esc(e.message) + "</div>"; }
 }
 
 async function toggleEbiosProject(id) {
-  const body = document.getElementById(`ebios-body-${id}`);
-  const isOpen = body.classList.contains('open');
-  // Close all
-  document.querySelectorAll('.ebios-project-body').forEach(b => b.classList.remove('open'));
-  if (!isOpen) {
-    body.classList.add('open');
-    await loadEbiosDetail(id);
-  }
+  const body = document.getElementById("ebios-body-" + id);
+  const isOpen = body.classList.contains("open");
+  document.querySelectorAll(".ebios-project-body").forEach(function(b) { b.classList.remove("open"); });
+  if (!isOpen) { body.classList.add("open"); await loadEbiosDetail(id); }
 }
 
 async function loadEbiosDetail(id) {
   currentEbiosId = id;
-  const detailEl = document.getElementById(`ebios-detail-${id}`);
-  detailEl.innerHTML = '<span class="spinner"></span>';
-
+  const detailEl = document.getElementById("ebios-detail-" + id);
+  detailEl.innerHTML = "<span class=\"spinner\"></span>";
   try {
-    const res = await fetch(`${API}/ebios/${id}`, { headers: auth() });
+    const res = await fetch(API + "/ebios/" + id, { headers: auth() });
     const p = await res.json();
+    const matrixHtml = buildRiskMatrix(p.scenarios||[]);
+    const assetOptions = (p.assets||[]).map(function(a){return "<option value=\"" + (a.id_asset||a.id) + "\">" + esc(a.name) + "</option>";}).join("");
 
-    const statusOpts = ['in_progress','completed'].map(s =>
-      `<option value="${s}" ${s===p.status?'selected':''}>${s}</option>`).join('');
+    const assetsHtml = (p.assets||[]).map(function(a) {
+      return "<div style=\"padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem;display:flex;justify-content:space-between\"><strong>" + esc(a.name) + "</strong></div>";
+    }).join("") || "<div style=\"color:var(--muted);font-size:.82rem;padding:.4rem 0\">Aucun actif</div>";
 
-    // Risk matrix
-    const matrixHtml = buildRiskMatrix(p.scenarios || []);
+    const fearHtml = (p.fear_events||[]).map(function(f) {
+      return "<div style=\"padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem;display:flex;justify-content:space-between\"><span>" + esc(f.description||"-") + "</span>" + (f.gravity ? "<span class=\"pill pill-" + gravityClass(f.gravity) + "\">G" + f.gravity + "</span>" : "") + "</div>";
+    }).join("") || "<div style=\"color:var(--muted);font-size:.82rem;padding:.4rem 0\">Aucun evenement redoute</div>";
 
-    // Assets
-    const assetsHtml = (p.assets || []).map(a => `
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem">
-        <div>
-          <strong>${esc(a.name)}</strong>
-          ${a.type ? `<span style="color:var(--muted);margin-left:.4rem">(${esc(a.type)})</span>` : ''}
-          ${a.description ? `<div style="color:var(--muted);font-size:.78rem">${esc(a.description)}</div>` : ''}
-        </div>
-        ${a.critical_level ? `<span class="pill pill-${a.critical_level.toLowerCase()}">${a.critical_level}</span>` : ''}
-      </div>`).join('') || '<div style="color:var(--muted);font-size:.82rem;padding:.4rem 0">Aucun actif défini</div>';
+    const rsHtml = (p.risk_sources||[]).map(function(rs) {
+      return "<div style=\"padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem;display:flex;justify-content:space-between\"><strong>" + esc(rs.name) + "</strong>" + (rs.pertinence ? "<span class=\"pill pill-" + pertinenceClass(rs.pertinence) + "\">P" + rs.pertinence + "</span>" : "") + "</div>";
+    }).join("") || "<div style=\"color:var(--muted);font-size:.82rem;padding:.4rem 0\">Aucune source de risque</div>";
 
-    // Fear events
-    const fearHtml = (p.fear_events || []).map(f => `
-      <div style="padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem">
-        <div style="display:flex;justify-content:space-between">
-          <span>${esc(f.description || '—')}</span>
-          ${f.gravity ? `<span class="pill pill-${gravityClass(f.gravity)}">G${f.gravity}</span>` : ''}
-        </div>
-        ${f.impact ? `<div style="color:var(--muted);font-size:.78rem">Impact : ${esc(f.impact)}</div>` : ''}
-      </div>`).join('') || '<div style="color:var(--muted);font-size:.82rem;padding:.4rem 0">Aucun événement redouté</div>';
+    const scenHtml = (p.scenarios||[]).map(function(sc) {
+      const rl = (sc.likelihood||0)*(sc.gravity||0);
+      return "<div style=\"padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.83rem\"><div style=\"display:flex;justify-content:space-between;align-items:center\"><strong>" + esc(sc.title) + "</strong><span class=\"pill " + riskLevelClass(rl) + "\">" + riskLevelLabel(rl) + "</span></div><div style=\"color:var(--muted);font-size:.78rem\">V:" + sc.likelihood + " G:" + sc.gravity + " - " + esc(sc.treatment||"") + "</div></div>";
+    }).join("") || "<div style=\"color:var(--muted);font-size:.82rem;padding:.4rem 0\">Aucun scenario</div>";
 
-    // Risk sources
-    const rsHtml = (p.risk_sources || []).map(rs => `
-      <div style="padding:.4rem 0;border-bottom:1px solid var(--border);font-size:.83rem">
-        <div style="display:flex;justify-content:space-between">
-          <strong>${esc(rs.name)}</strong>
-          ${rs.pertinence ? `<span class="pill pill-${pertinenceClass(rs.pertinence)}">P${rs.pertinence}</span>` : ''}
-        </div>
-        ${rs.category ? `<div style="color:var(--muted);font-size:.78rem">Catégorie : ${esc(rs.category)}</div>` : ''}
-        ${rs.motivation ? `<div style="color:var(--muted);font-size:.78rem">Motivation : ${esc(rs.motivation)}</div>` : ''}
-      </div>`).join('') || '<div style="color:var(--muted);font-size:.82rem;padding:.4rem 0">Aucune source de risque</div>';
+    detailEl.innerHTML =
+      "<div style=\"display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap\">" +
+      (p.status !== "completed" ? "<button class=\"btn btn-accent btn-sm\" onclick=\"finalizeEbios(" + id + ")\">Finaliser</button>" : "") +
+      "<button class=\"btn btn-pdf btn-sm\" onclick=\"currentEbiosId=" + id + ";exportEbiosPdf()\">PDF</button></div>" +
 
-    // Scenarios
-    const scenHtml = (p.scenarios || []).map(sc => {
-      const rl = (sc.likelihood || 0) * (sc.gravity || 0);
-      return `
-        <div style="padding:.5rem 0;border-bottom:1px solid var(--border);font-size:.83rem">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem">
-            <strong>${esc(sc.title)}</strong>
-            <span class="pill ${riskLevelClass(rl)}">${riskLevelLabel(rl)} (${rl})</span>
-          </div>
-          <div style="display:flex;gap:.75rem;color:var(--muted);font-size:.78rem">
-            <span>Type: <b style="color:var(--text)">${esc(sc.type)}</b></span>
-            <span>Vraisemblance: <b style="color:var(--text)">${sc.likelihood}</b></span>
-            <span>Gravité: <b style="color:var(--text)">${sc.gravity}</b></span>
-          </div>
-          ${sc.description ? `<div style="color:var(--muted);font-size:.78rem;margin-top:.2rem">${esc(sc.description)}</div>` : ''}
-          ${sc.treatment ? `<div style="font-size:.78rem;color:var(--accent);margin-top:.2rem">Traitement : ${esc(sc.treatment)}</div>` : ''}
-        </div>`;
-    }).join('') || '<div style="color:var(--muted);font-size:.82rem;padding:.4rem 0">Aucun scénario</div>';
+      "<div class=\"ebios-section\"><div class=\"ebios-section-title\"><span>Actifs (" + (p.assets||[]).length + ")</span><button class=\"btn btn-outline btn-sm\" onclick=\"toggleForm('form-assets-" + id + "')\">+ Ajouter</button></div>" +
+      "<div id=\"form-assets-" + id + "\" class=\"hidden\"><div class=\"mini-form\"><div class=\"mf-group\"><span class=\"mf-label\">Nom *</span><input id=\"asset-name-" + id + "\" placeholder=\"Serveur web\" /></div><div class=\"mf-group\"><span class=\"mf-label\">Type</span><select id=\"asset-type-" + id + "\"><option value=\"\">-</option><option>primary</option><option>supporting</option></select></div><button class=\"btn btn-primary btn-sm\" onclick=\"addAsset(" + id + ")\" style=\"align-self:flex-end\">Ajouter</button></div></div>" +
+      assetsHtml + "</div>" +
 
-    // Asset select options for fear events
-    const assetOptions = (p.assets || []).map(a =>
-      `<option value="${a.id_asset || a.id}">${esc(a.name)}</option>`).join('');
+      "<div class=\"ebios-section\"><div class=\"ebios-section-title\"><span>Evenements redoutes (" + (p.fear_events||[]).length + ")</span><button class=\"btn btn-outline btn-sm\" onclick=\"toggleForm('form-fear-" + id + "')\">+ Ajouter</button></div>" +
+      "<div id=\"form-fear-" + id + "\" class=\"hidden\"><div class=\"mini-form\"><div class=\"mf-group\"><span class=\"mf-label\">Actif lie</span><select id=\"fear-asset-" + id + "\"><option value=\"\">-</option>" + assetOptions + "</select></div><div class=\"mf-group\" style=\"flex:1;min-width:180px\"><span class=\"mf-label\">Description *</span><input id=\"fear-desc-" + id + "\" placeholder=\"Divulgation donnees\" /></div><div class=\"mf-group\"><span class=\"mf-label\">Gravite (1-4)</span><input type=\"number\" id=\"fear-gravity-" + id + "\" min=\"1\" max=\"4\" style=\"width:70px\" /></div><button class=\"btn btn-primary btn-sm\" onclick=\"addFearEvent(" + id + ")\" style=\"align-self:flex-end\">Ajouter</button></div></div>" +
+      fearHtml + "</div>" +
 
-    detailEl.innerHTML = `
-      <div style="display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
-        ${p.status !== 'completed' ? `<button class="btn btn-accent btn-sm" onclick="finalizeEbios(${id})">✅ Finaliser le projet</button>` : ''}
-        <button class="btn btn-pdf btn-sm" onclick="currentEbiosId=${id};exportEbiosPdf()">⬇️ Exporter PDF</button>
-      </div>
+      "<div class=\"ebios-section\"><div class=\"ebios-section-title\"><span>Sources de risque (" + (p.risk_sources||[]).length + ")</span><button class=\"btn btn-outline btn-sm\" onclick=\"toggleForm('form-rs-" + id + "')\">+ Ajouter</button></div>" +
+      "<div id=\"form-rs-" + id + "\" class=\"hidden\"><div class=\"mini-form\"><div class=\"mf-group\"><span class=\"mf-label\">Nom *</span><input id=\"rs-name-" + id + "\" placeholder=\"Cybercriminel\" /></div><div class=\"mf-group\"><span class=\"mf-label\">Pertinence (1-4)</span><input type=\"number\" id=\"rs-pert-" + id + "\" min=\"1\" max=\"4\" style=\"width:70px\" /></div><button class=\"btn btn-primary btn-sm\" onclick=\"addRiskSource(" + id + ")\" style=\"align-self:flex-end\">Ajouter</button></div></div>" +
+      rsHtml + "</div>" +
 
-      ${p.scope ? `<p style="font-size:.83rem;color:var(--muted);margin-bottom:.75rem">📌 Périmètre : ${esc(p.scope)}</p>` : ''}
-      ${p.context ? `<p style="font-size:.83rem;color:var(--muted);margin-bottom:.75rem">🏢 Contexte : ${esc(p.context)}</p>` : ''}
+      "<div class=\"ebios-section\"><div class=\"ebios-section-title\"><span>Scenarios (" + (p.scenarios||[]).length + ")</span><button class=\"btn btn-outline btn-sm\" onclick=\"toggleForm('form-scen-" + id + "')\">+ Ajouter</button></div>" +
+      "<div id=\"form-scen-" + id + "\" class=\"hidden\"><div class=\"mini-form\" style=\"flex-direction:column\"><div style=\"display:flex;gap:.5rem;flex-wrap:wrap\"><div class=\"mf-group\" style=\"flex:1;min-width:200px\"><span class=\"mf-label\">Titre *</span><input id=\"scen-title-" + id + "\" placeholder=\"Exfiltration via phishing\" /></div><div class=\"mf-group\"><span class=\"mf-label\">Vraisemblance (1-4)</span><input type=\"number\" id=\"scen-like-" + id + "\" min=\"1\" max=\"4\" style=\"width:70px\" /></div><div class=\"mf-group\"><span class=\"mf-label\">Gravite (1-4)</span><input type=\"number\" id=\"scen-grav-" + id + "\" min=\"1\" max=\"4\" style=\"width:70px\" /></div><div class=\"mf-group\"><span class=\"mf-label\">Traitement</span><select id=\"scen-treat-" + id + "\"><option value=\"reduce\">Reduire</option><option value=\"accept\">Accepter</option><option value=\"transfer\">Transferer</option><option value=\"avoid\">Eviter</option></select></div></div><button class=\"btn btn-primary btn-sm\" onclick=\"addScenario(" + id + ")\" style=\"align-self:flex-start\">Ajouter</button></div></div>" +
+      scenHtml + "</div>" +
+      ((p.scenarios||[]).length ? "<div class=\"ebios-section\"><div class=\"ebios-section-title\"><span>Matrice de risque</span></div>" + matrixHtml + "</div>" : "");
 
-      <!-- Actifs -->
-      <div class="ebios-section">
-        <div class="ebios-section-title">
-          <span>🏛️ Actifs (${(p.assets||[]).length})</span>
-          <button class="btn btn-outline btn-sm" onclick="toggleForm('form-assets-${id}')">+ Ajouter</button>
-        </div>
-        <div id="form-assets-${id}" class="hidden">
-          <div class="mini-form">
-            <div class="mf-group"><span class="mf-label">Nom *</span><input id="asset-name-${id}" placeholder="Serveur web prod" /></div>
-            <div class="mf-group"><span class="mf-label">Type</span><select id="asset-type-${id}"><option value="">—</option><option>primary</option><option>supporting</option><option>business_process</option></select></div>
-            <div class="mf-group"><span class="mf-label">Criticité</span><select id="asset-crit-${id}"><option value="">—</option><option>low</option><option>medium</option><option>high</option><option>critical</option></select></div>
-            <div class="mf-group" style="flex:1;min-width:160px"><span class="mf-label">Description</span><input id="asset-desc-${id}" placeholder="Décrit l'actif…" /></div>
-            <button class="btn btn-primary btn-sm" onclick="addAsset(${id})" style="align-self:flex-end">Ajouter</button>
-          </div>
-        </div>
-        ${assetsHtml}
-      </div>
-
-      <!-- Événements redoutés -->
-      <div class="ebios-section">
-        <div class="ebios-section-title">
-          <span>💀 Événements redoutés (${(p.fear_events||[]).length})</span>
-          <button class="btn btn-outline btn-sm" onclick="toggleForm('form-fear-${id}')">+ Ajouter</button>
-        </div>
-        <div id="form-fear-${id}" class="hidden">
-          <div class="mini-form">
-            <div class="mf-group"><span class="mf-label">Actif lié</span><select id="fear-asset-${id}"><option value="">—</option>${assetOptions}</select></div>
-            <div class="mf-group" style="flex:1;min-width:180px"><span class="mf-label">Description *</span><input id="fear-desc-${id}" placeholder="Divulgation des données clients" /></div>
-            <div class="mf-group"><span class="mf-label">Impact</span><input id="fear-impact-${id}" placeholder="Financier, réputation…" /></div>
-            <div class="mf-group"><span class="mf-label">Gravité (1-4)</span><input type="number" id="fear-gravity-${id}" min="1" max="4" style="width:70px" /></div>
-            <button class="btn btn-primary btn-sm" onclick="addFearEvent(${id})" style="align-self:flex-end">Ajouter</button>
-          </div>
-        </div>
-        ${fearHtml}
-      </div>
-
-      <!-- Sources de risque -->
-      <div class="ebios-section">
-        <div class="ebios-section-title">
-          <span>🎯 Sources de risque (${(p.risk_sources||[]).length})</span>
-          <button class="btn btn-outline btn-sm" onclick="toggleForm('form-rs-${id}')">+ Ajouter</button>
-        </div>
-        <div id="form-rs-${id}" class="hidden">
-          <div class="mini-form">
-            <div class="mf-group"><span class="mf-label">Nom *</span><input id="rs-name-${id}" placeholder="Cybercriminel externe" /></div>
-            <div class="mf-group"><span class="mf-label">Catégorie</span><select id="rs-cat-${id}"><option value="">—</option><option>state</option><option>cybercriminal</option><option>hacktivist</option><option>insider</option><option>competitor</option></select></div>
-            <div class="mf-group"><span class="mf-label">Motivation</span><input id="rs-motiv-${id}" placeholder="Gain financier" /></div>
-            <div class="mf-group"><span class="mf-label">Pertinence (1-4)</span><input type="number" id="rs-pert-${id}" min="1" max="4" style="width:70px" /></div>
-            <button class="btn btn-primary btn-sm" onclick="addRiskSource(${id})" style="align-self:flex-end">Ajouter</button>
-          </div>
-        </div>
-        ${rsHtml}
-      </div>
-
-      <!-- Scénarios -->
-      <div class="ebios-section">
-        <div class="ebios-section-title">
-          <span>⚙️ Scénarios de risque (${(p.scenarios||[]).length})</span>
-          <button class="btn btn-outline btn-sm" onclick="toggleForm('form-scen-${id}')">+ Ajouter</button>
-        </div>
-        <div id="form-scen-${id}" class="hidden">
-          <div class="mini-form" style="flex-direction:column;gap:.5rem">
-            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-              <div class="mf-group"><span class="mf-label">Type</span><select id="scen-type-${id}"><option value="strategic">Stratégique</option><option value="operational">Opérationnel</option></select></div>
-              <div class="mf-group" style="flex:1;min-width:200px"><span class="mf-label">Titre *</span><input id="scen-title-${id}" placeholder="Exfiltration via phishing ciblé" /></div>
-              <div class="mf-group"><span class="mf-label">Vraisemblance (1-4)</span><input type="number" id="scen-like-${id}" min="1" max="4" style="width:70px" /></div>
-              <div class="mf-group"><span class="mf-label">Gravité (1-4)</span><input type="number" id="scen-grav-${id}" min="1" max="4" style="width:70px" /></div>
-              <div class="mf-group"><span class="mf-label">Traitement</span><select id="scen-treat-${id}"><option value="accept">Accepter</option><option value="reduce">Réduire</option><option value="transfer">Transférer</option><option value="avoid">Éviter</option></select></div>
-            </div>
-            <div class="mf-group" style="width:100%"><span class="mf-label">Description</span><textarea id="scen-desc-${id}" placeholder="Description du scénario…"></textarea></div>
-            <div class="mf-group" style="width:100%"><span class="mf-label">Chemin d'attaque (JSON, ex: [{"step":"Phishing","technique":"T1566","mitreId":"T1566"}])</span><textarea id="scen-path-${id}" placeholder='[{"step":"Reconnaissance","technique":"T1595"}]'></textarea></div>
-            <button class="btn btn-primary btn-sm" onclick="addScenario(${id})" style="align-self:flex-start">Ajouter le scénario</button>
-          </div>
-        </div>
-        ${scenHtml}
-      </div>
-
-      <!-- Matrice de risque -->
-      ${(p.scenarios||[]).length ? `
-      <div class="ebios-section">
-        <div class="ebios-section-title"><span>📊 Matrice de risque</span></div>
-        ${matrixHtml}
-      </div>` : ''}
-    `;
-  } catch(err) {
-    detailEl.innerHTML = `<div class="empty">Erreur : ${esc(err.message)}</div>`;
-  }
+  } catch(err) { detailEl.innerHTML = "<div class=\"empty\">Erreur : " + esc(err.message) + "</div>"; }
 }
 
 function buildRiskMatrix(scenarios) {
-  const labels = ['1', '2', '3', '4'];
+  const labels = ["1","2","3","4"];
   const cells = {};
-  scenarios.forEach(sc => {
-    const key = `${sc.likelihood}-${sc.gravity}`;
-    cells[key] = (cells[key] || 0) + 1;
-  });
-
-  const riskColor = (l, g) => {
-    const v = l * g;
-    if (v >= 12) return 'risk-vhigh';
-    if (v >= 6)  return 'risk-high';
-    if (v >= 3)  return 'risk-med';
-    return 'risk-low-c';
-  };
-
-  let html = `<div style="font-size:.75rem;color:var(--muted);margin-bottom:.4rem">Vraisemblance → / Gravité ↓</div>
-    <div class="risk-matrix">
-      <div class="risk-label"></div>
-      ${labels.map(l => `<div class="risk-label">V${l}</div>`).join('')}
-      ${labels.map(g => `
-        <div class="risk-label">G${g}</div>
-        ${labels.map(l => {
-          const key = `${l}-${g}`;
-          const cnt = cells[key] || 0;
-          return `<div class="risk-cell ${riskColor(parseInt(l),parseInt(g))}">${cnt || ''}</div>`;
-        }).join('')}
-      `).join('')}
-    </div>`;
-  return html;
+  scenarios.forEach(function(sc) { const key = sc.likelihood + "-" + sc.gravity; cells[key] = (cells[key]||0)+1; });
+  function riskColor(l,g) { const v=l*g; if(v>=12)return"risk-vhigh"; if(v>=6)return"risk-high"; if(v>=3)return"risk-med"; return"risk-low-c"; }
+  return "<div style=\"font-size:.75rem;color:var(--muted);margin-bottom:.4rem\">Vraisemblance / Gravite</div><div class=\"risk-matrix\"><div class=\"risk-label\"></div>" +
+    labels.map(function(l){return "<div class=\"risk-label\">V"+l+"</div>";}).join("") +
+    labels.map(function(g){return "<div class=\"risk-label\">G"+g+"</div>"+labels.map(function(l){const k=l+"-"+g;const c=cells[k]||0;return"<div class=\"risk-cell "+riskColor(parseInt(l),parseInt(g))+"\">"+( c||"")+"</div>";}).join("");}).join("") +
+    "</div>";
 }
 
-function toggleForm(id) {
-  const el = document.getElementById(id);
-  el.classList.toggle('hidden');
-}
+function toggleForm(id) { document.getElementById(id).classList.toggle("hidden"); }
 
 async function addAsset(projectId) {
-  const body = {
-    name: document.getElementById(`asset-name-${projectId}`).value.trim(),
-    type: document.getElementById(`asset-type-${projectId}`).value || undefined,
-    description: document.getElementById(`asset-desc-${projectId}`).value.trim() || undefined,
-    critical_level: document.getElementById(`asset-crit-${projectId}`).value || undefined,
-  };
-  if (!body.name) { toast('Nom requis', 'error'); return; }
-  const res = await fetch(`${API}/ebios/${projectId}/assets`, { method: 'POST', headers: auth(), body: JSON.stringify(body) });
-  if (res.ok || res.status === 201) { toast('Actif ajouté'); loadEbiosDetail(projectId); }
-  else { const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  const body = { name: document.getElementById("asset-name-"+projectId).value.trim(), type: document.getElementById("asset-type-"+projectId).value || undefined };
+  if (!body.name) { toast("Nom requis", "error"); return; }
+  const res = await fetch(API + "/ebios/" + projectId + "/assets", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+  if (res.ok || res.status === 201) { toast("Actif ajoute"); loadEbiosDetail(projectId); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 }
 
 async function addFearEvent(projectId) {
-  const body = {
-    id_asset: document.getElementById(`fear-asset-${projectId}`).value ? parseInt(document.getElementById(`fear-asset-${projectId}`).value) : undefined,
-    description: document.getElementById(`fear-desc-${projectId}`).value.trim(),
-    impact: document.getElementById(`fear-impact-${projectId}`).value.trim() || undefined,
-    gravity: document.getElementById(`fear-gravity-${projectId}`).value ? parseInt(document.getElementById(`fear-gravity-${projectId}`).value) : undefined,
-  };
-  if (!body.description) { toast('Description requise', 'error'); return; }
-  const res = await fetch(`${API}/ebios/${projectId}/fear-events`, { method: 'POST', headers: auth(), body: JSON.stringify(body) });
-  if (res.ok || res.status === 201) { toast('Événement redouté ajouté'); loadEbiosDetail(projectId); }
-  else { const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  const body = { id_asset: document.getElementById("fear-asset-"+projectId).value ? parseInt(document.getElementById("fear-asset-"+projectId).value) : undefined, description: document.getElementById("fear-desc-"+projectId).value.trim(), gravity: document.getElementById("fear-gravity-"+projectId).value ? parseInt(document.getElementById("fear-gravity-"+projectId).value) : undefined };
+  if (!body.description) { toast("Description requise", "error"); return; }
+  const res = await fetch(API + "/ebios/" + projectId + "/fear-events", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+  if (res.ok || res.status === 201) { toast("Evenement ajoute"); loadEbiosDetail(projectId); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 }
 
 async function addRiskSource(projectId) {
-  const body = {
-    name: document.getElementById(`rs-name-${projectId}`).value.trim(),
-    category: document.getElementById(`rs-cat-${projectId}`).value || undefined,
-    motivation: document.getElementById(`rs-motiv-${projectId}`).value.trim() || undefined,
-    pertinence: document.getElementById(`rs-pert-${projectId}`).value ? parseInt(document.getElementById(`rs-pert-${projectId}`).value) : undefined,
-  };
-  if (!body.name) { toast('Nom requis', 'error'); return; }
-  const res = await fetch(`${API}/ebios/${projectId}/risk-sources`, { method: 'POST', headers: auth(), body: JSON.stringify(body) });
-  if (res.ok || res.status === 201) { toast('Source de risque ajoutée'); loadEbiosDetail(projectId); }
-  else { const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  const body = { name: document.getElementById("rs-name-"+projectId).value.trim(), pertinence: document.getElementById("rs-pert-"+projectId).value ? parseInt(document.getElementById("rs-pert-"+projectId).value) : undefined };
+  if (!body.name) { toast("Nom requis", "error"); return; }
+  const res = await fetch(API + "/ebios/" + projectId + "/risk-sources", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+  if (res.ok || res.status === 201) { toast("Source ajoutee"); loadEbiosDetail(projectId); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 }
 
 async function addScenario(projectId) {
-  let attackPath = undefined;
-  const pathVal = document.getElementById(`scen-path-${projectId}`).value.trim();
-  if (pathVal) {
-    try { attackPath = JSON.parse(pathVal); }
-    catch(e) { toast('Chemin d\'attaque JSON invalide', 'error'); return; }
-  }
-  const body = {
-    type: document.getElementById(`scen-type-${projectId}`).value,
-    title: document.getElementById(`scen-title-${projectId}`).value.trim(),
-    description: document.getElementById(`scen-desc-${projectId}`).value.trim() || undefined,
-    likelihood: parseInt(document.getElementById(`scen-like-${projectId}`).value) || 1,
-    gravity: parseInt(document.getElementById(`scen-grav-${projectId}`).value) || 1,
-    treatment: document.getElementById(`scen-treat-${projectId}`).value,
-    attack_path: attackPath,
-  };
-  if (!body.title) { toast('Titre requis', 'error'); return; }
-  const res = await fetch(`${API}/ebios/${projectId}/scenarios`, { method: 'POST', headers: auth(), body: JSON.stringify(body) });
-  if (res.ok || res.status === 201) { toast('Scénario ajouté'); loadEbiosDetail(projectId); }
-  else { const d = await res.json().catch(()=>{}); toast(d?.detail || 'Erreur', 'error'); }
+  const body = { type: "strategic", title: document.getElementById("scen-title-"+projectId).value.trim(), likelihood: parseInt(document.getElementById("scen-like-"+projectId).value)||1, gravity: parseInt(document.getElementById("scen-grav-"+projectId).value)||1, treatment: document.getElementById("scen-treat-"+projectId).value };
+  if (!body.title) { toast("Titre requis", "error"); return; }
+  const res = await fetch(API + "/ebios/" + projectId + "/scenarios", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+  if (res.ok || res.status === 201) { toast("Scenario ajoute"); loadEbiosDetail(projectId); }
+  else { const d = await res.json().catch(function(){return{};}); toast(d.detail || "Erreur", "error"); }
 }
 
 async function finalizeEbios(id) {
-  if (!confirm('Finaliser ce projet EBIOS RM ?')) return;
-  const res = await fetch(`${API}/ebios/${id}/complete`, { method: 'PATCH', headers: auth() });
-  if (res.ok) { toast('Projet finalisé'); loadEbiosDetail(id); }
-  else toast('Erreur finalisation', 'error');
+  if (!confirm("Finaliser ce projet EBIOS RM ?")) return;
+  const res = await fetch(API + "/ebios/" + id + "/complete", { method: "PATCH", headers: auth() });
+  if (res.ok) { toast("Projet finalise"); loadEbiosDetail(id); }
+  else toast("Erreur finalisation", "error");
 }
 
-function gravityClass(g) {
-  if (g >= 4) return 'critical';
-  if (g >= 3) return 'high';
-  if (g >= 2) return 'medium';
-  return 'low';
-}
-function pertinenceClass(p) {
-  if (p >= 4) return 'critical';
-  if (p >= 3) return 'high';
-  if (p >= 2) return 'medium';
-  return 'low';
-}
-function riskLevelClass(rl) {
-  if (rl >= 12) return 'pill pill-risk-critical';
-  if (rl >= 6)  return 'pill pill-risk-high';
-  return 'pill pill-risk-low';
-}
-function riskLevelLabel(rl) {
-  if (rl >= 12) return 'Critique';
-  if (rl >= 6)  return 'Élevé';
-  return 'Faible';
-}
+function gravityClass(g) { if(g>=4)return"critical"; if(g>=3)return"high"; if(g>=2)return"medium"; return"low"; }
+function pertinenceClass(p) { if(p>=4)return"critical"; if(p>=3)return"high"; if(p>=2)return"medium"; return"low"; }
+function riskLevelClass(rl) { if(rl>=12)return"pill pill-risk-critical"; if(rl>=6)return"pill pill-risk-high"; return"pill pill-risk-low"; }
+function riskLevelLabel(rl) { if(rl>=12)return"Critique"; if(rl>=6)return"Eleve"; return"Faible"; }
 
-// ── IA Assistant ──────────────────────────────────────────────────────────
 let chatHistory = [];
 let isStreaming = false;
-let aiAvailable = false;
 
 async function initAI() {
-  const dotEl = document.getElementById('ai-dot');
-  const textEl = document.getElementById('ai-status-text');
+  const dotEl = document.getElementById("ai-dot");
+  const textEl = document.getElementById("ai-status-text");
   try {
-    const res = await fetch(`${API}/ai/status`, { headers: auth() });
-    if (!res.ok) throw new Error('API indisponible');
+    const res = await fetch(API + "/ai/status", { headers: auth() });
+    if (!res.ok) throw new Error("API indisponible");
     const data = await res.json();
-    aiAvailable = data.available;
-    dotEl.className = `ai-dot ${aiAvailable ? 'online' : 'offline'}`;
-    if (aiAvailable) {
+    dotEl.className = "ai-dot " + (data.available ? "online" : "offline");
+    if (data.available) {
       const models = data.models || [];
-      textEl.textContent = `Ollama disponible — ${models.length} modèle(s) : ${models.join(', ') || '—'}`;
-      const sel = document.getElementById('ai-model-select');
-      sel.innerHTML = '<option value="">Défaut</option>' + models.map(m => `<option value="${m}">${m}</option>`).join('');
-    } else {
-      textEl.textContent = 'Ollama non disponible — vérifiez que le service est démarré';
-    }
-  } catch(e) {
-    dotEl.className = 'ai-dot offline';
-    textEl.textContent = `Erreur connexion : ${e.message}`;
-    aiAvailable = false;
-  }
-
-  // Populate context selector with scans and incidents
+      textEl.textContent = "Ollama disponible - " + models.length + " modele(s) : " + (models.join(", ")||"-");
+      const sel = document.getElementById("ai-model-select");
+      sel.innerHTML = "<option value=\"\">Defaut</option>" + models.map(function(m){return "<option value=\""+m+"\">"+m+"</option>";}).join("");
+    } else { textEl.textContent = "Ollama non disponible"; }
+  } catch(e) { dotEl.className = "ai-dot offline"; textEl.textContent = "Erreur connexion : " + e.message; }
   await populateContextSelector();
 }
 
 async function populateContextSelector() {
-  const sel = document.getElementById('ai-context-select');
-  sel.innerHTML = '<option value="">Sans contexte</option>';
+  const sel = document.getElementById("ai-context-select");
+  sel.innerHTML = "<option value=\"\">Sans contexte</option>";
   try {
-    const [scansRes, incRes] = await Promise.all([
-      fetch(`${API}/scans/`, { headers: auth() }),
-      fetch(`${API}/incidents/`, { headers: auth() }),
-    ]);
+    const [scansRes, incRes] = await Promise.all([fetch(API+"/scans/",{headers:auth()}), fetch(API+"/incidents/",{headers:auth()})]);
     const scans = scansRes.ok ? await scansRes.json() : [];
     const incidents = incRes.ok ? await incRes.json() : [];
-    scans.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = `scan:${s.id_scan}`;
-      opt.textContent = `Scan #${s.id_scan} — ${s.image_name}:${s.image_tag}`;
-      sel.appendChild(opt);
-    });
-    incidents.forEach(i => {
-      const opt = document.createElement('option');
-      opt.value = `incident:${i.id_incident}`;
-      opt.textContent = `Incident #${i.id_incident} — ${i.title}`;
-      sel.appendChild(opt);
-    });
-  } catch(e) { /* ignore */ }
+    scans.forEach(function(s){const opt=document.createElement("option");opt.value="scan:"+s.id_scan;opt.textContent="Scan #"+s.id_scan+" - "+s.image_name;sel.appendChild(opt);});
+    incidents.forEach(function(i){const opt=document.createElement("option");opt.value="incident:"+i.id_incident;opt.textContent="Incident #"+i.id_incident+" - "+i.title;sel.appendChild(opt);});
+  } catch(e) {}
 }
 
 function switchToAITab() {
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-  document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
-  const tab = document.querySelector('[data-tab="ai"]');
-  if (tab) { tab.classList.add('active'); }
-  const section = document.getElementById('tab-ai');
-  if (section) { section.classList.add('active'); }
+  document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active");});
+  document.querySelectorAll(".section").forEach(function(x){x.classList.remove("active");});
+  const tab = document.querySelector("[data-tab=\"ai\"]");
+  if (tab) tab.classList.add("active");
+  const section = document.getElementById("tab-ai");
+  if (section) section.classList.add("active");
   initAI();
 }
 
-function clearChat() {
-  chatHistory = [];
-  document.getElementById('chat-messages').innerHTML =
-    '<div style="text-align:center;color:var(--muted);font-size:.85rem;padding:2rem">Conversation effacée.</div>';
-}
+function clearChat() { chatHistory = []; document.getElementById("chat-messages").innerHTML = "<div style=\"text-align:center;color:var(--muted);font-size:.85rem;padding:2rem\">Conversation effacee.</div>"; }
 
-function appendMessage(role, content, streaming = false) {
-  const container = document.getElementById('chat-messages');
-  const msgEl = document.createElement('div');
-  msgEl.className = `chat-msg ${role}`;
-  const id = `msg-${Date.now()}`;
-  msgEl.innerHTML = `
-    <div class="sender">${role === 'user' ? 'Vous' : '🤖 IA'}</div>
-    <div class="bubble" id="${id}">${esc(content)}${streaming ? '<span class="streaming-cursor"></span>' : ''}</div>`;
+function appendMessage(role, content, streaming) {
+  const container = document.getElementById("chat-messages");
+  const msgEl = document.createElement("div");
+  msgEl.className = "chat-msg " + role;
+  const id = "msg-" + Date.now();
+  msgEl.innerHTML = "<div class=\"sender\">" + (role==="user"?"Vous":"IA") + "</div><div class=\"bubble\" id=\"" + id + "\">" + esc(content) + (streaming?"<span class=\"streaming-cursor\"></span>":"") + "</div>";
   container.appendChild(msgEl);
   container.scrollTop = container.scrollHeight;
   return id;
 }
 
-function updateMessageContent(id, content, done = false) {
+function updateMessageContent(id, content, done) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.innerHTML = esc(content) + (done ? '' : '<span class="streaming-cursor"></span>');
-  const container = document.getElementById('chat-messages');
-  container.scrollTop = container.scrollHeight;
+  el.innerHTML = esc(content) + (done ? "" : "<span class=\"streaming-cursor\"></span>");
+  document.getElementById("chat-messages").scrollTop = document.getElementById("chat-messages").scrollHeight;
 }
 
 async function sendChat() {
   if (isStreaming) return;
-  const input = document.getElementById('chat-input');
+  const input = document.getElementById("chat-input");
   const msg = input.value.trim();
   if (!msg) return;
-  input.value = '';
-
-  chatHistory.push({ role: 'user', content: msg });
-  appendMessage('user', msg);
-
-  // Parse context
-  const contextVal = document.getElementById('ai-context-select').value;
-  let context_type = undefined, context_id = undefined;
-  if (contextVal) {
-    const [type, cid] = contextVal.split(':');
-    context_type = type;
-    context_id = parseInt(cid);
-  }
-
-  const model = document.getElementById('ai-model-select').value || undefined;
-
-  await streamChat({ messages: chatHistory, model, context_type, context_id });
+  input.value = "";
+  chatHistory.push({ role: "user", content: msg });
+  appendMessage("user", msg);
+  const contextVal = document.getElementById("ai-context-select").value;
+  let context_type, context_id;
+  if (contextVal) { const parts = contextVal.split(":"); context_type = parts[0]; context_id = parseInt(parts[1]); }
+  const model = document.getElementById("ai-model-select").value || undefined;
+  await streamChat({ messages: chatHistory, model: model, context_type: context_type, context_id: context_id });
 }
 
 async function streamChat(body) {
   isStreaming = true;
-  const btn = document.getElementById('chat-send-btn');
-  btn.disabled = true;
-  btn.textContent = '…';
-
-  const msgId = appendMessage('assistant', '', true);
-  let accumulated = '';
-
+  const btn = document.getElementById("chat-send-btn");
+  btn.disabled = true; btn.textContent = "...";
+  const msgId = appendMessage("assistant", "", true);
+  let accumulated = "";
   try {
-    const res = await fetch(`${API}/ai/chat`, {
-      method: 'POST',
-      headers: auth(),
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const d = await res.json().catch(()=>({detail:'Erreur'}));
-      updateMessageContent(msgId, d.detail || 'Erreur API', true);
-      isStreaming = false; btn.disabled = false; btn.textContent = 'Envoyer';
-      return;
-    }
-
+    const res = await fetch(API + "/ai/chat", { method: "POST", headers: auth(), body: JSON.stringify(body) });
+    if (!res.ok) { const d = await res.json().catch(function(){return{detail:"Erreur"};}); updateMessageContent(msgId, d.detail||"Erreur API", true); return; }
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
-
+    let buffer = "";
     while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
+      const result = await reader.read();
+      if (result.done) break;
+      buffer += decoder.decode(result.value, { stream: true });
+      const lines = buffer.split("\n");
       buffer = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.startsWith("data: ")) continue;
         const data = line.slice(6).trim();
-        if (data === '[DONE]') { updateMessageContent(msgId, accumulated, true); break; }
-        try {
-          const obj = JSON.parse(data);
-          if (obj.token) { accumulated += obj.token; updateMessageContent(msgId, accumulated, false); }
-        } catch(e) { /* skip bad JSON */ }
+        if (data === "[DONE]") { updateMessageContent(msgId, accumulated, true); break; }
+        try { const obj = JSON.parse(data); if (obj.token) { accumulated += obj.token; updateMessageContent(msgId, accumulated, false); } } catch(e) {}
       }
     }
-    updateMessageContent(msgId, accumulated || '(pas de réponse)', true);
-    chatHistory.push({ role: 'assistant', content: accumulated });
-  } catch(err) {
-    updateMessageContent(msgId, `Erreur : ${err.message}`, true);
-  }
-
-  isStreaming = false;
-  btn.disabled = false;
-  btn.textContent = 'Envoyer';
+    updateMessageContent(msgId, accumulated || "(pas de reponse)", true);
+    chatHistory.push({ role: "assistant", content: accumulated });
+  } catch(err) { updateMessageContent(msgId, "Erreur : " + err.message, true); }
+  isStreaming = false; btn.disabled = false; btn.textContent = "Envoyer";
 }
 
 async function streamAnalyze(endpoint, label) {
   isStreaming = true;
-  const container = document.getElementById('chat-messages');
-  // Remove placeholder
-  if (container.children.length === 1 && container.children[0].style.textAlign === 'center') {
-    container.innerHTML = '';
-  }
-
-  appendMessage('user', `🔍 ${label}`);
-
-  const btn = document.getElementById('chat-send-btn');
+  appendMessage("user", "Analyse : " + label);
+  const btn = document.getElementById("chat-send-btn");
   btn.disabled = true;
-
-  const msgId = appendMessage('assistant', '', true);
-  let accumulated = '';
-
+  const msgId = appendMessage("assistant", "", true);
+  let accumulated = "";
   try {
-    const res = await fetch(`${API}${endpoint}`, { method: 'POST', headers: auth() });
-    if (!res.ok) {
-      const d = await res.json().catch(()=>({detail:'Erreur'}));
-      updateMessageContent(msgId, d.detail || 'Erreur API', true);
-      isStreaming = false; btn.disabled = false; btn.textContent = 'Envoyer'; return;
-    }
-
+    const res = await fetch(API + endpoint, { method: "POST", headers: auth() });
+    if (!res.ok) { const d = await res.json().catch(function(){return{detail:"Erreur"};}); updateMessageContent(msgId, d.detail||"Erreur API", true); return; }
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
-    let buffer = '';
-
+    let buffer = "";
     while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
+      const result = await reader.read();
+      if (result.done) break;
+      buffer += decoder.decode(result.value, { stream: true });
+      const lines = buffer.split("\n");
       buffer = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!line.startsWith("data: ")) continue;
         const data = line.slice(6).trim();
-        if (data === '[DONE]') { updateMessageContent(msgId, accumulated, true); break; }
-        try {
-          const obj = JSON.parse(data);
-          if (obj.token) { accumulated += obj.token; updateMessageContent(msgId, accumulated, false); }
-        } catch(e) { /* skip */ }
+        if (data === "[DONE]") { updateMessageContent(msgId, accumulated, true); break; }
+        try { const obj = JSON.parse(data); if (obj.token) { accumulated += obj.token; updateMessageContent(msgId, accumulated, false); } } catch(e) {}
       }
     }
-    updateMessageContent(msgId, accumulated || '(analyse vide)', true);
-    chatHistory.push({ role: 'user', content: label });
-    chatHistory.push({ role: 'assistant', content: accumulated });
-  } catch(err) {
-    updateMessageContent(msgId, `Erreur : ${err.message}`, true);
-  }
-
-  isStreaming = false;
-  btn.disabled = false;
-  btn.textContent = 'Envoyer';
+    updateMessageContent(msgId, accumulated || "(analyse vide)", true);
+    chatHistory.push({ role: "user", content: label });
+    chatHistory.push({ role: "assistant", content: accumulated });
+  } catch(err) { updateMessageContent(msgId, "Erreur : " + err.message, true); }
+  isStreaming = false; btn.disabled = false; btn.textContent = "Envoyer";
 }
 
-// ── Logs CloudWatch ───────────────────────────────────────────────────────
 async function loadLogGroups() {
-  const listEl = document.getElementById('log-groups-list');
-  listEl.innerHTML = '<div class="empty">Chargement…</div>';
+  const listEl = document.getElementById("log-groups-list");
+  listEl.innerHTML = "<div class=\"empty\">Chargement...</div>";
   try {
-    const prefix = document.getElementById('log-group-search').value.trim();
-    const url = `${API}/logs/cloudwatch/groups${prefix ? '?prefix=' + encodeURIComponent(prefix) : ''}`;
+    const prefix = document.getElementById("log-group-search").value.trim();
+    const url = API + "/logs/cloudwatch/groups" + (prefix ? "?prefix=" + encodeURIComponent(prefix) : "");
     const res = await fetch(url, { headers: auth() });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
     allLogGroups = await res.json();
     renderLogGroups(allLogGroups);
   } catch(e) {
-    listEl.innerHTML = `<div class="empty" style="color:var(--red-h)">Erreur : ${esc(e.message)}<br><small style="color:var(--muted)">LocalStack est-il démarré ?</small></div>`;
+    listEl.innerHTML = "<div class=\"empty\" style=\"color:var(--red-h)\">Erreur : " + esc(e.message) + "</div>";
     allLogGroups = [];
   }
 }
 
 function filterLogGroups() {
-  const q = document.getElementById('log-group-search').value.toLowerCase();
-  const filtered = allLogGroups.filter(g => (g.logGroupName || g).toLowerCase().includes(q));
-  renderLogGroups(filtered);
+  const q = document.getElementById("log-group-search").value.toLowerCase();
+  renderLogGroups(allLogGroups.filter(function(g){return (g.logGroupName||g).toLowerCase().includes(q);}));
 }
 
 function renderLogGroups(groups) {
-  const listEl = document.getElementById('log-groups-list');
-  if (!groups.length) {
-    listEl.innerHTML = '<div class="empty">Aucun groupe</div>';
-    return;
-  }
-  listEl.innerHTML = groups.map(g => {
+  const listEl = document.getElementById("log-groups-list");
+  if (!groups.length) { listEl.innerHTML = "<div class=\"empty\">Aucun groupe</div>"; return; }
+  listEl.innerHTML = groups.map(function(g) {
     const name = g.logGroupName || g;
-    const isActive = selectedLogGroup === name;
-    return `<div class="log-group-item${isActive?' active':''}" onclick="selectLogGroup('${esc(name)}')" title="${esc(name)}">${esc(name)}</div>`;
-  }).join('');
+    return "<div class=\"log-group-item" + (selectedLogGroup===name?" active":"") + "\" onclick=\"selectLogGroup('" + esc(name) + "'))\">" + esc(name) + "</div>";
+  }).join("");
 }
 
 async function selectLogGroup(name) {
   selectedLogGroup = name;
   renderLogGroups(allLogGroups);
-  const labelEl = document.getElementById('log-right-label');
-  const paneEl = document.getElementById('log-right-pane');
-  labelEl.textContent = name;
-  paneEl.innerHTML = '<span class="spinner"></span> Chargement des streams…';
-
+  document.getElementById("log-right-label").textContent = name;
+  const paneEl = document.getElementById("log-right-pane");
+  paneEl.innerHTML = "<span class=\"spinner\"></span> Chargement des streams...";
   try {
-    const res = await fetch(`${API}/logs/cloudwatch/groups/${encodeURIComponent(name)}/streams`, { headers: auth() });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(API + "/logs/cloudwatch/groups/" + encodeURIComponent(name) + "/streams", { headers: auth() });
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const streams = await res.json();
-    if (!streams.length) {
-      paneEl.innerHTML = '<div class="empty">Aucun stream dans ce groupe</div>';
-      return;
-    }
-    paneEl.innerHTML = `
-      <div style="font-size:.75rem;color:var(--muted);margin-bottom:.4rem">Streams (${streams.length})</div>
-      ${streams.map(s => {
-        const sname = s.logStreamName || s;
-        return `<div class="log-stream-item" onclick="loadLogEvents('${esc(name)}','${esc(sname)}')">${esc(sname)}</div>`;
-      }).join('')}`;
-  } catch(e) {
-    paneEl.innerHTML = `<div class="empty" style="color:var(--red-h)">Erreur : ${esc(e.message)}</div>`;
-  }
+    if (!streams.length) { paneEl.innerHTML = "<div class=\"empty\">Aucun stream</div>"; return; }
+    paneEl.innerHTML = streams.map(function(s) {
+      const sname = s.logStreamName || s;
+      return "<div class=\"log-stream-item\" onclick=\"loadLogEvents('" + esc(name) + "','" + esc(sname) + "'))\">" + esc(sname) + "</div>";
+    }).join("");
+  } catch(e) { paneEl.innerHTML = "<div class=\"empty\" style=\"color:var(--red-h)\">Erreur : " + esc(e.message) + "</div>"; }
 }
 
 async function loadLogEvents(groupName, streamName) {
-  const paneEl = document.getElementById('log-right-pane');
-  paneEl.innerHTML = '<span class="spinner"></span> Chargement des événements…';
-
+  const paneEl = document.getElementById("log-right-pane");
+  paneEl.innerHTML = "<span class=\"spinner\"></span> Chargement...";
   try {
-    const url = `${API}/logs/cloudwatch/groups/${encodeURIComponent(groupName)}/streams/${encodeURIComponent(streamName)}/events?limit=100`;
-    const res = await fetch(url, { headers: auth() });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(API + "/logs/cloudwatch/groups/" + encodeURIComponent(groupName) + "/streams/" + encodeURIComponent(streamName) + "/events?limit=100", { headers: auth() });
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const events = await res.json();
-
-    if (!events.length) {
-      paneEl.innerHTML = `
-        <div style="margin-bottom:.5rem"><button class="btn btn-outline btn-sm" onclick="selectLogGroup('${esc(groupName)}')">← Retour</button></div>
-        <div class="empty">Aucun événement dans ce stream</div>`;
-      return;
-    }
-
-    const eventsHtml = events.map(e => {
-      const ts = e.timestamp ? new Date(e.timestamp).toLocaleString('fr-FR') : '';
-      const msg = e.message || e;
-      return `<div class="log-event-line"><span class="log-ts">${ts}</span>${esc(msg)}</div>`;
-    }).join('');
-
-    paneEl.innerHTML = `
-      <div style="margin-bottom:.5rem;display:flex;gap:.5rem;align-items:center">
-        <button class="btn btn-outline btn-sm" onclick="selectLogGroup('${esc(groupName)}')">← Retour</button>
-        <span style="font-size:.78rem;color:var(--muted)">${esc(streamName)} — ${events.length} événements</span>
-        <button class="btn btn-outline btn-sm" onclick="loadLogEvents('${esc(groupName)}','${esc(streamName)}')">↻</button>
-      </div>
-      <div class="log-events-pane">${eventsHtml}</div>`;
-  } catch(e) {
-    paneEl.innerHTML = `
-      <div style="margin-bottom:.5rem"><button class="btn btn-outline btn-sm" onclick="selectLogGroup('${esc(groupName)}')">← Retour</button></div>
-      <div class="empty" style="color:var(--red-h)">Erreur : ${esc(e.message)}</div>`;
-  }
+    if (!events.length) { paneEl.innerHTML = "<div style=\"margin-bottom:.5rem\"><button class=\"btn btn-outline btn-sm\" onclick=\"selectLogGroup('" + esc(groupName) + "')\">Retour</button></div><div class=\"empty\">Aucun evenement</div>"; return; }
+    paneEl.innerHTML = "<div style=\"margin-bottom:.5rem;display:flex;gap:.5rem;align-items:center\"><button class=\"btn btn-outline btn-sm\" onclick=\"selectLogGroup('" + esc(groupName) + "')\">Retour</button><span style=\"font-size:.78rem;color:var(--muted)\">" + esc(streamName) + " - " + events.length + " evenements</span><button class=\"btn btn-outline btn-sm\" onclick=\"loadLogEvents('" + esc(groupName) + "','" + esc(streamName) + "')\">Actualiser</button></div><div class=\"log-events-pane\">" +
+      events.map(function(e){const ts=e.timestamp?new Date(e.timestamp).toLocaleString("fr-FR"):"";return "<div class=\"log-event-line\"><span class=\"log-ts\">"+ts+"</span>"+esc(e.message||e)+"</div>";}).join("") + "</div>";
+  } catch(e) { paneEl.innerHTML = "<div style=\"margin-bottom:.5rem\"><button class=\"btn btn-outline btn-sm\" onclick=\"selectLogGroup('" + esc(groupName) + "')\">Retour</button></div><div class=\"empty\" style=\"color:var(--red-h)\">Erreur : " + esc(e.message) + "</div>"; }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function rolePill(r) { return `<span class="pill pill-${r}">${r}</span>`; }
-function statusPill(a) { return a ? `<span class="pill pill-active">actif</span>` : `<span class="pill pill-inactive">inactif</span>`; }
-function fmtDate(iso) {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
-}
+function esc(s) { return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function rolePill(r) { return "<span class=\"pill pill-"+r+"\">"+r+"</span>"; }
+function statusPill(a) { return a ? "<span class=\"pill pill-active\">actif</span>" : "<span class=\"pill pill-inactive\">inactif</span>"; }
+function fmtDate(iso) { if (!iso) return "-"; return new Date(iso).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }); }
 
-// ── Init ──────────────────────────────────────────────────────────────────
-loadProfile().catch(() => logout());
+loadProfile().catch(function() { logout(); });
 </script>
 </body>
 </html>

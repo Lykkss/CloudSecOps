@@ -359,17 +359,16 @@
         <span>📱 Scanner une application mobile (APK)</span>
         <button class="btn btn-outline btn-sm" onclick="loadMobileScans()">↻ Actualiser</button>
       </div>
-      <!-- Upload zone -->
-      <div class="drop-zone" id="apk-drop-zone" onclick="document.getElementById('apk-file-input').click()">
-        <input type="file" id="apk-file-input" accept=".apk" onchange="handleApkSelect(this.files[0])" />
-        <div class="dz-icon">📦</div>
-        <div class="dz-text">Glissez-déposez un fichier APK ici</div>
-        <div class="dz-hint">ou cliquez pour sélectionner un fichier</div>
+      <!-- Scan depuis URL Play Store -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem">
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem">Scanner depuis le Play Store ou App Store</div>
+      <div style="display:flex;gap:.5rem">
+        <input type="url" id="playstore-url-input"
+          placeholder="https://play.google.com/store/apps/details?id=com.example.app"
+          style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:.5rem .75rem;font-size:.88rem;outline:none" />
+        <button class="btn btn-primary" onclick="scanFromUrl()">Scanner</button>
       </div>
-      <div id="apk-upload-status" style="margin-top:.75rem"></div>
-      <div style="margin-top:1.25rem">
-        <div id="mobile-scans-content"><span class="spinner"></span></div>
-      </div>
+      <div id="url-scan-status" style="margin-top:.5rem;font-size:.83rem"></div>
     </div>
     <!-- Détail mobile scan -->
     <div class="card hidden" id="mobile-detail-card">
@@ -1004,7 +1003,24 @@ function scoreClass(score) {
   if (score < 70) return 'score-orange';
   return 'score-green';
 }
-
+async function scanFromUrl() {
+  const url = document.getElementById('playstore-url-input').value.trim();
+  const status = document.getElementById('url-scan-status');
+  if (!url) { status.innerHTML = '<span style="color:var(--red-h)">URL requise</span>'; return; }
+  status.innerHTML = '<span class="spinner"></span> Telechargement et analyse en cours...';
+  try {
+    const res = await fetch(`${API}/mobile-scans/scan-url`, {
+      method: 'POST', headers: auth(), body: JSON.stringify({ url }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Erreur');
+    status.innerHTML = `<span style="color:#3fb950">Scan lance - ID #${data.id_scan}</span>`;
+    document.getElementById('playstore-url-input').value = '';
+    setTimeout(() => { status.innerHTML = ''; loadMobileScans(); }, 2000);
+  } catch(e) {
+    status.innerHTML = `<span style="color:var(--red-h)">Erreur : ${esc(e.message)}</span>`;
+  }
+}
 async function loadMobileScans() {
   document.getElementById('mobile-scans-content').innerHTML = '<span class="spinner"></span>';
   try {

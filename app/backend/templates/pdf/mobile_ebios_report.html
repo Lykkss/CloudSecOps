@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+{% block content %}
+
+{# ══════════════════════════════════════════════════════════
+   PAGE DE GARDE
+══════════════════════════════════════════════════════════ #}
+<div class="page-header">
+  <div>
+    <div class="logo-text">☁ CloudSecOps</div>
+    <div class="logo-sub">Rapport d'Analyse de Sécurité Mobile — Méthode EBIOS Risk Manager</div>
+  </div>
+  <div class="doc-ref">
+    Réf. {{ ref }}<br>
+    {{ date }}<br>
+    <span style="color:#c0392b;font-weight:700">CONFIDENTIEL</span>
+  </div>
+</div>
+
+<h1>{{ scan.app_name }}</h1>
+<div style="font-size:10pt;color:#666;margin-bottom:16px">
+  Rapport d'analyse de sécurité mobile généré automatiquement par CloudSecOps
+  via MobSF v3.9.7 et analyse IA (Ollama llama3)
+</div>
+
+{# Verdict global #}
+<div style="background:{{ verdict_color }}15;border:2px solid {{ verdict_color }};
+            border-radius:8px;padding:16px;margin-bottom:20px;text-align:center">
+  <div style="font-size:8pt;text-transform:uppercase;letter-spacing:1px;color:{{ verdict_color }};margin-bottom:4px">
+    VERDICT DE SÉCURITÉ
+  </div>
+  <div style="font-size:28pt;font-weight:700;color:{{ verdict_color }}">
+    APPLICATION {{ verdict }}
+  </div>
+  <div style="font-size:10pt;color:#333;margin-top:6px">{{ verdict_desc }}</div>
+</div>
+
+{# Meta box #}
+<div class="meta-box">
+  <div><div class="k">Application</div><div class="v">{{ scan.app_name }}</div></div>
+  <div><div class="k">Package</div><div class="v"><code>{{ scan.package_name }}</code></div></div>
+  <div><div class="k">Version</div><div class="v">{{ scan.version or '—' }}</div></div>
+  <div><div class="k">Plateforme</div><div class="v">{{ scan.platform|upper }}</div></div>
+  <div><div class="k">Date d'analyse</div><div class="v">{{ scan.scanned_at }}</div></div>
+  <div><div class="k">Hash MobSF</div><div class="v"><code style="font-size:7pt">{{ scan.mobsf_hash or '—' }}</code></div></div>
+  <div><div class="k">Score de sécurité</div><div class="v" style="color:{{ verdict_color }};font-size:14pt;font-weight:700">{{ scan.security_score }}/100</div></div>
+  <div><div class="k">Référence rapport</div><div class="v">{{ ref }}</div></div>
+</div>
+
+{# Score bar #}
+{% if scan.security_score is not none %}
+<div style="margin-bottom:20px">
+  <div class="score-bar" style="width:100%;height:16px">
+    <div class="score-fill" style="width:{{ scan.security_score }}%;background:{{ verdict_color }};height:16px"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:8pt;color:#666;margin-top:2px">
+    <span>0 — Critique</span><span>50 — Modéré</span><span>100 — Sûr</span>
+  </div>
+</div>
+{% endif %}
+
+{# Résumé vulnérabilités #}
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px">
+  {% for sev, count, color in [
+    ('CRITIQUE', counts.critical, '#c0392b'),
+    ('ÉLEVÉ',   counts.high,     '#d68910'),
+    ('MOYEN',   counts.warning,  '#f39c12'),
+    ('INFO',    counts.info,     '#1a73e8')
+  ] %}
+  <div style="text-align:center;padding:10px;border:1px solid {{ color }}20;background:{{ color }}10;border-radius:6px">
+    <div style="font-size:20pt;font-weight:700;color:{{ color }}">{{ count }}</div>
+    <div style="font-size:8pt;color:{{ color }};font-weight:600">{{ sev }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+{# ══ PAGE 2 — CONTEXTE & PÉRIMÈTRE ══ #}
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div></div>
+  <div class="doc-ref">{{ ref }}</div>
+</div>
+
+<h2>1. Contexte et Périmètre</h2>
+
+<div class="info-box">
+  <strong>Référentiel appliqué :</strong> ANSSI EBIOS Risk Manager (2018) — 5 ateliers
+  | ISO/IEC 27001:2022 | MITRE ATT&CK Mobile | OWASP MASVS v2
+</div>
+
+<h3>1.1 Contexte organisationnel</h3>
+<p>{{ context_user or 'Non renseigné.' }}</p>
+
+<h3>1.2 Objectifs de l'analyse</h3>
+<p>{{ objectifs or 'Évaluer le niveau de sécurité de l\'application mobile et identifier les risques pour les utilisateurs.' }}</p>
+
+<h3>1.3 Périmètre</h3>
+<p>{{ perimetre or 'Application mobile Android ' + scan.app_name + ' (package ' + scan.package_name + ').' }}</p>
+
+<h3>1.4 Méthodologie</h3>
+<table>
+  <thead><tr><th>Outil</th><th>Version</th><th>Type d'analyse</th><th>Référentiel</th></tr></thead>
+  <tbody>
+    <tr><td>MobSF</td><td>v3.9.7</td><td>Analyse statique APK</td><td>OWASP MASVS</td></tr>
+    <tr><td>Ollama (llama3)</td><td>8B</td><td>Analyse IA assistée</td><td>MITRE ATT&CK Mobile</td></tr>
+    <tr><td>EBIOS RM</td><td>2018</td><td>Analyse des risques</td><td>ANSSI</td></tr>
+  </tbody>
+</table>
+
+{# ══ ATELIER 1 — BIENS VALORISÉS ══ #}
+<h2>2. Atelier 1 — Cadrage et Socle de Sécurité</h2>
+
+<h3>2.1 Biens valorisés (BV)</h3>
+<table>
+  <thead><tr><th>Bien valorisé</th><th>Type</th><th>Description</th><th>Criticité</th></tr></thead>
+  <tbody>
+  {% for a in assets %}
+  <tr>
+    <td><strong>{{ a.name }}</strong></td>
+    <td>{{ a.type }}</td>
+    <td>{{ a.description }}</td>
+    <td>
+      {% set c = a.critical_level %}
+      <span class="pill {% if c >= 4 %}pill-critical{% elif c >= 3 %}pill-high{% elif c >= 2 %}pill-medium{% else %}pill-low{% endif %}">
+        {{ c }}/4
+      </span>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h3>2.2 Événements redoutés (ER)</h3>
+<table>
+  <thead><tr><th>Événement redouté</th><th>Impact (CIA)</th><th>Gravité</th></tr></thead>
+  <tbody>
+  {% for fe in fear_events %}
+  <tr>
+    <td>{{ fe.description }}</td>
+    <td>{{ fe.impact }}</td>
+    <td>
+      <span class="pill {% if fe.gravity >= 4 %}pill-critical{% elif fe.gravity >= 3 %}pill-high{% elif fe.gravity >= 2 %}pill-medium{% else %}pill-low{% endif %}">
+        G{{ fe.gravity }}/4
+      </span>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{# ══ ATELIER 2 — SOURCES DE RISQUE ══ #}
+<h2>3. Atelier 2 — Sources de Risque</h2>
+<table>
+  <thead><tr><th>Source de risque</th><th>Catégorie</th><th>Motivation</th><th>Ressources</th><th>Pertinence</th></tr></thead>
+  <tbody>
+  {% for rs in risk_sources %}
+  <tr>
+    <td><strong>{{ rs.name }}</strong></td>
+    <td>{{ rs.category }}</td>
+    <td>{{ rs.motivation }}</td>
+    <td>{{ rs.resources }}</td>
+    <td>
+      <span class="pill {% if rs.pertinence >= 4 %}pill-critical{% elif rs.pertinence >= 3 %}pill-high{% elif rs.pertinence >= 2 %}pill-medium{% else %}pill-low{% endif %}">
+        P{{ rs.pertinence }}/4
+      </span>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{# ══ PAGE 3 — SCÉNARIOS ══ #}
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div></div>
+  <div class="doc-ref">{{ ref }}</div>
+</div>
+
+<h2>4. Ateliers 3 & 4 — Scénarios de Risque</h2>
+
+{% set strategic = scenarios | selectattr("type", "equalto", "strategic") | list %}
+{% set operational = scenarios | selectattr("type", "equalto", "operational") | list %}
+
+{% if strategic %}
+<h3>4.1 Scénarios stratégiques (Atelier 3)</h3>
+<table>
+  <thead><tr><th>Scénario</th><th>Description</th><th>V</th><th>G</th><th>Niveau de risque</th><th>Traitement</th></tr></thead>
+  <tbody>
+  {% for sc in strategic %}
+  {% set rl = sc.risk_level %}
+  <tr>
+    <td><strong>{{ sc.title }}</strong></td>
+    <td style="font-size:9pt">{{ sc.description }}</td>
+    <td>{{ sc.likelihood }}</td>
+    <td>{{ sc.gravity }}</td>
+    <td>
+      <span class="pill {% if rl >= 12 %}pill-critical{% elif rl >= 6 %}pill-high{% elif rl >= 3 %}pill-medium{% else %}pill-low{% endif %}">
+        {% if rl >= 12 %}CRITIQUE{% elif rl >= 6 %}ÉLEVÉ{% elif rl >= 3 %}MOYEN{% else %}FAIBLE{% endif %}
+        ({{ rl }})
+      </span>
+    </td>
+    <td>{{ sc.treatment }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if operational %}
+<h3>4.2 Scénarios opérationnels MITRE ATT&CK Mobile (Atelier 4)</h3>
+<table>
+  <thead><tr><th>Scénario</th><th>Description</th><th>Technique MITRE</th><th>V</th><th>G</th><th>Risque</th></tr></thead>
+  <tbody>
+  {% for sc in operational %}
+  {% set rl = sc.risk_level %}
+  <tr>
+    <td><strong>{{ sc.title }}</strong></td>
+    <td style="font-size:9pt">{{ sc.description[:120] }}{% if sc.description|length > 120 %}...{% endif %}</td>
+    <td>
+      {% for step in sc.attack_path %}
+        <code style="font-size:7.5pt">{{ step.mitreId }}</code>
+      {% endfor %}
+    </td>
+    <td>{{ sc.likelihood }}</td>
+    <td>{{ sc.gravity }}</td>
+    <td>
+      <span class="pill {% if rl >= 12 %}pill-critical{% elif rl >= 6 %}pill-high{% elif rl >= 3 %}pill-medium{% else %}pill-low{% endif %}">
+        {{ rl }}
+      </span>
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<h3>4.3 Matrice de risque (Vraisemblance × Gravité)</h3>
+<div style="margin:10px 0 20px">
+  <table style="width:auto;border-collapse:collapse;font-size:8.5pt;text-align:center">
+    <thead>
+      <tr>
+        <th style="background:#fff;color:#333;width:40px">V\G</th>
+        {% for g in [1,2,3,4] %}<th style="background:#0f3460;width:70px">G{{ g }}</th>{% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+    {% for v in [4,3,2,1] %}
+    <tr>
+      <td style="background:#0f3460;color:#fff;font-weight:700">V{{ v }}</td>
+      {% for g in [1,2,3,4] %}
+      {% set rl = v * g %}
+      {% set cnt = risk_matrix.get(v|string + '-' + g|string, 0) %}
+      <td style="padding:8px;
+        background:{% if rl >= 12 %}#fce4ec{% elif rl >= 6 %}#fff3e0{% elif rl >= 3 %}#fffde7{% else %}#e8f8e8{% endif %};
+        color:{% if rl >= 12 %}#c0392b{% elif rl >= 6 %}#d68910{% elif rl >= 3 %}#b7950b{% else %}#1e8449{% endif %};
+        font-weight:{% if cnt > 0 %}700{% else %}400{% endif %}">
+        {% if cnt > 0 %}{{ cnt }}{% else %}—{% endif %}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <div style="font-size:8pt;color:#666;margin-top:4px">
+    Valeur = nombre de scénarios — 
+    <span style="color:#c0392b">■</span> Critique (≥12) 
+    <span style="color:#d68910">■</span> Élevé (≥6) 
+    <span style="color:#b7950b">■</span> Moyen (≥3) 
+    <span style="color:#1e8449">■</span> Faible (&lt;3)
+  </div>
+</div>
+
+{# ══ PAGE 4 — ANALYSE MOBSF ══ #}
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div></div>
+  <div class="doc-ref">{{ ref }}</div>
+</div>
+
+<h2>5. Analyse MobSF — Détails Techniques</h2>
+
+{% if dangerous_perms %}
+<h3>5.1 Permissions dangereuses ({{ dangerous_perms|length }})</h3>
+<table>
+  <thead><tr><th>Permission</th><th>Description</th><th>Statut</th></tr></thead>
+  <tbody>
+  {% for p in dangerous_perms %}
+  <tr>
+    <td><code>{{ p.permission if p is mapping else p }}</code></td>
+    <td style="font-size:9pt">{{ p.description if p is mapping else '—' }}</td>
+    <td>
+      {% if p is mapping and p.status %}
+      <span class="pill pill-{% if p.status == 'dangerous' %}critical{% else %}medium{% endif %}">{{ p.status }}</span>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if trackers %}
+<h3>5.2 Trackers détectés ({{ trackers|length }})</h3>
+{% if trackers %}
+<div class="warning-box">⚠️ {{ trackers|length }} SDK(s) de tracking identifié(s) — impact RGPD potentiel (Art. 6)</div>
+{% endif %}
+<table>
+  <thead><tr><th>Tracker</th><th>Catégorie</th><th>URL</th></tr></thead>
+  <tbody>
+  {% for t in trackers %}
+  <tr>
+    <td><strong>{{ t.name if t is mapping else t }}</strong></td>
+    <td>{{ t.categories|join(', ') if t is mapping and t.categories else (t.category if t is mapping else '—') }}</td>
+    <td style="font-size:7.5pt"><code>{{ t.url if t is mapping else '—' }}</code></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if findings %}
+<h3>5.3 Findings de sécurité ({{ findings|length }})</h3>
+<table>
+  <thead><tr><th>Finding</th><th>Sévérité</th><th>Description</th><th>MITRE</th></tr></thead>
+  <tbody>
+  {% for f in findings %}
+  <tr>
+    <td style="font-size:8.5pt"><strong>{{ f.title[:50] }}</strong></td>
+    <td><span class="pill pill-{{ f.severity }}">{{ f.severity|upper }}</span></td>
+    <td style="font-size:8.5pt">{{ f.description[:100] if f.description else '—' }}</td>
+    <td><code style="font-size:7.5pt">{{ f.mitre or '—' }}</code></td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{# ══ PAGE 5 — ANALYSE IA ══ #}
+{% if ollama_available %}
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div></div>
+  <div class="doc-ref">{{ ref }}</div>
+</div>
+
+<h2>6. Analyse Forensique IA (Ollama llama3)</h2>
+
+<div class="info-box">
+  🤖 Analyse générée par Ollama llama3 (8B) déployé sur infrastructure Kimsufi
+  via tunnel WireGuard ChaCha20-Poly1305 — traitement local, données non transmises à des tiers.
+</div>
+
+{% if ollama_forensic %}
+<h3>6.1 Analyse forensique</h3>
+<div style="background:#f8f9fa;border-left:4px solid #0f3460;padding:12px;border-radius:4px;font-size:10pt;line-height:1.7;margin-bottom:16px;white-space:pre-wrap">{{ ollama_forensic }}</div>
+{% endif %}
+
+{% if ollama_recs_parsed %}
+<h3>6.2 Recommandations IA</h3>
+<table>
+  <thead><tr><th>Priorité</th><th>Action recommandée</th><th>Responsable</th><th>Délai</th></tr></thead>
+  <tbody>
+  {% for r in ollama_recs_parsed %}
+  <tr>
+    <td><span class="pill pill-{% if 'CRITIQUE' in r.priority|upper %}critical{% elif 'ELEV' in r.priority|upper %}high{% elif 'MOYEN' in r.priority|upper %}medium{% else %}low{% endif %}">{{ r.priority }}</span></td>
+    <td>{{ r.action }}</td>
+    <td>{{ r.owner }}</td>
+    <td>{{ r.delai }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endif %}
+
+{# ══ PAGE FINALE — RECOMMANDATIONS & CONCLUSION ══ #}
+<div class="page-break"></div>
+
+<div class="page-header">
+  <div><div class="logo-text">☁ CloudSecOps</div></div>
+  <div class="doc-ref">{{ ref }}</div>
+</div>
+
+<h2>7. Atelier 5 — Traitement des Risques et Recommandations</h2>
+
+<table>
+  <thead><tr><th>Priorité</th><th>Action recommandée</th><th>Responsable</th><th>Délai</th></tr></thead>
+  <tbody>
+  {% for r in recommendations %}
+  <tr>
+    <td>
+      <span class="pill pill-{% if r.priority == 'CRITIQUE' %}critical{% elif r.priority == 'ÉLEVÉE' %}high{% elif r.priority == 'MOYENNE' %}medium{% else %}low{% endif %}">
+        {{ r.priority }}
+      </span>
+    </td>
+    <td>{{ r.action }}</td>
+    <td>{{ r.owner }}</td>
+    <td>{{ r.delai }}</td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+<h2>8. Conclusion</h2>
+
+<div style="background:{{ verdict_color }}10;border:2px solid {{ verdict_color }};
+            border-radius:8px;padding:16px;margin-bottom:16px">
+  <div style="font-size:12pt;font-weight:700;color:{{ verdict_color }};margin-bottom:8px">
+    ▶ VERDICT FINAL : APPLICATION {{ verdict }}
+  </div>
+  <p style="margin:0;font-size:10.5pt;line-height:1.7">{{ verdict_desc }}</p>
+
+  {% if scan.security_score is not none %}
+  <div style="margin-top:10px;font-size:10pt">
+    Score de sécurité global : <strong style="color:{{ verdict_color }}">{{ scan.security_score }}/100</strong>
+    {% if scan.security_score < 40 %}
+    — L'application ne doit PAS être déployée en l'état. Des corrections critiques sont requises.
+    {% elif scan.security_score < 70 %}
+    — L'application peut être déployée avec prudence après correction des points élevés.
+    {% else %}
+    — L'application présente un niveau de sécurité acceptable pour un déploiement.
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div style="margin-top:10px;font-size:9.5pt;color:#444">
+    <strong>Résumé des risques :</strong>
+    {{ counts.critical }} finding(s) critique(s) —
+    {{ counts.high }} finding(s) élevé(s) —
+    {{ dangerous_perms|length }} permission(s) dangereuse(s) —
+    {{ trackers|length }} tracker(s) —
+    {{ scenarios|length }} scénario(s) EBIOS RM identifié(s)
+  </div>
+</div>
+
+<div class="info-box">
+  <strong>Référentiel de conformité :</strong><br>
+  Ce rapport a été produit conformément aux référentiels suivants :
+  ANSSI EBIOS Risk Manager (2018) · ISO/IEC 27001:2022 (A.8.8, A.5.26, A.8.16) ·
+  OWASP MASVS v2 · MITRE ATT&CK Mobile · RGPD (UE) 2016/679
+</div>
+
+<div style="margin-top:20px;font-size:8.5pt;color:#888;border-top:1px solid #eee;padding-top:10px">
+  Rapport généré le {{ generated_at }} par CloudSecOps — Ynov Campus B3 Cybersécurité<br>
+  Analyse MobSF v3.9.7 + Ollama llama3 8B + EBIOS RM 2018 (ANSSI)<br>
+  <em>Ce rapport est confidentiel et destiné uniquement aux équipes sécurité autorisées.</em>
+</div>
+
+{% endblock %}

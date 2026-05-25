@@ -1,8 +1,8 @@
 import json
 import os
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from core.database import get_db
@@ -35,10 +35,8 @@ def export_scan(scan_id: int, db: Session = Depends(get_db),
     scan = db.query(ScanResult).filter(ScanResult.id_scan == scan_id).first()
     if not scan:
         raise HTTPException(404, "Scan introuvable")
-
     raw = json.loads(scan.raw_json) if scan.raw_json else []
     _, _, _, _, vulns = _parse_vulns(raw)
-
     scan_dict = {
         "id_scan": scan.id_scan, "image_name": scan.image_name, "image_tag": scan.image_tag,
         "git_sha": scan.git_sha, "critical_count": scan.critical_count,
@@ -57,7 +55,6 @@ def export_mobile_scan(scan_id: int, db: Session = Depends(get_db),
     scan = db.query(MobileScan).filter(MobileScan.id_scan == scan_id).first()
     if not scan:
         raise HTTPException(404, "Scan introuvable")
-
     scan_dict = {
         "id_scan": scan.id_scan, "app_name": scan.app_name,
         "package_name": scan.package_name, "version": scan.version,
@@ -79,7 +76,6 @@ def export_incident(incident_id: int, db: Session = Depends(get_db),
     inc = db.query(Incident).filter(Incident.id_incident == incident_id).first()
     if not inc:
         raise HTTPException(404, "Incident introuvable")
-
     inc_dict = {
         "id_incident": inc.id_incident, "type": inc.type, "title": inc.title,
         "severity": inc.severity, "status": inc.status,
@@ -98,7 +94,6 @@ def export_report(report_id: int, db: Session = Depends(get_db),
     r = db.query(ForensicReport).filter(ForensicReport.id_report == report_id).first()
     if not r:
         raise HTTPException(404, "Rapport introuvable")
-
     r_dict = {
         "id_report": r.id_report, "title": r.title, "status": r.status,
         "id_incident": r.id_incident, "id_author": r.id_author,
@@ -117,15 +112,49 @@ def export_ebios(project_id: int, db: Session = Depends(get_db),
     p = db.query(EbiosProject).filter(EbiosProject.id_project == project_id).first()
     if not p:
         raise HTTPException(404, "Projet EBIOS introuvable")
-
     from routers.ebios import _asset, _fear, _proj, _scenario, _source
     proj_dict = _proj(p)
     proj_dict["created_at"] = p.created_at.isoformat() if p.created_at else ""
-
     assets    = [_asset(a) for a in db.query(EbiosAsset).filter(EbiosAsset.id_project == project_id).all()]
     fears     = [_fear(e) for e in db.query(EbiosFearEvent).filter(EbiosFearEvent.id_project == project_id).all()]
     sources   = [_source(s) for s in db.query(EbiosRiskSource).filter(EbiosRiskSource.id_project == project_id).all()]
     scenarios = [_scenario(sc) for sc in db.query(EbiosScenario).filter(EbiosScenario.id_project == project_id).all()]
-
     pdf = pdf_generator.ebios_pdf(proj_dict, assets, fears, sources, scenarios)
     return _pdf_response(pdf, f"ebios-{project_id}.pdf")
+
+
+# ── Rapport EBIOS RM complet depuis scan MobSF ────────────────────────────────
+
+class MobileEbiosRequest(BaseModel):
+    context_user: str = ""
+    objectifs:    str = ""
+    perimetre:    str = ""
+
+
+@router.post("/pdf/mobile-scan/{scan_id}/ebios",
+             summary="Export PDF — Rapport EBIOS RM complet depuis scan MobSF + Ollama")
+async def export_mobile_ebios(
+    scan_id: int,
+    payload: MobileEbiosRequest,
+    db: Session = Depends(get_db),
+    user: User = Depends(require_role("admin")),
+):
+    from services.mobile_ebios_report import build_full_mobile_report
+
+    scan = db.query(MobileScan).filter(MobileScan.id_scan == scan_id).first()
+    if not scan:
+        raise HTTPException(404, "Scan introuvable")
+    if scan.status != "completed":
+        raise HTTPException(400, f"Scan non terminé (statut: {scan.status})")
+
+    data = await build_full_mobile_report(
+        scan=scan,
+        context_user=payload.context_user,
+        objectifs=payload.objectifs,
+        perimetre=payload.perimetre,
+        db=db,
+        author_id=user.id_user,
+    )
+
+    pdf = pdf_generator._render("mobile_ebios_report.html", data)
+    return _pdf_response(pdf, f"ebios-mobile-{scan_id}.pdf")

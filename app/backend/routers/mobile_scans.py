@@ -9,6 +9,7 @@ from dependencies.auth import require_role
 from models.mobile_scan import MobileScan
 from models.user import User
 from services import mobsf_client
+from services.mobsf_to_forensic import generate_forensic_report, generate_ebios_project
 from services.apk_downloader import download_apk_from_playstore, extract_package_from_url
 
 router = APIRouter(prefix="/mobile-scans", tags=["mobile"])
@@ -81,6 +82,26 @@ async def _run_mobsf_scan(scan: MobileScan, content: bytes, filename: str, db: S
 
     db.commit()
     db.refresh(scan)
+
+     # Génération automatique rapport forensique + EBIOS RM
+    try:
+        generate_forensic_report(
+            scan_id=scan.id_scan,
+            app_name=scan.app_name or "",
+            package_name=scan.package_name or "",
+            raw_json=scan.raw_json,
+            db=db,
+        )
+        generate_ebios_project(
+            scan_id=scan.id_scan,
+            app_name=scan.app_name or "",
+            package_name=scan.package_name or "",
+            raw_json=scan.raw_json,
+            db=db,
+        )
+    except Exception as e:
+        # Non bloquant — le scan est valide même si la génération auto échoue
+        print(f"[WARN] Génération auto forensic/EBIOS échouée : {e}")
     return scan
 
 

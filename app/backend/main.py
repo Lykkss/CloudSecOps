@@ -2,12 +2,12 @@ import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from core.database import Base, engine
 from routers import ai, auth, ebios, export, health, incidents, logs, mobile_scans, reports, scans, users
 
-# Création des tables au démarrage (remplacer par Alembic en prod)
 Base.metadata.create_all(bind=engine)
 
 _DESCRIPTION = """
@@ -58,10 +58,16 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://52.47.190.170",
+        "http://52.47.190.170:3000",
+        "http://52.47.190.170:8000",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
     ],
-    allow_methods=["GET", "POST", "DELETE"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type"],
 )
 
@@ -77,7 +83,22 @@ app.include_router(ai.router)
 app.include_router(logs.router)
 app.include_router(export.router)
 
-# Interface web (servie sous /ui)
-_FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
-if os.path.isdir(_FRONTEND_DIR):
-    app.mount("/ui", StaticFiles(directory=_FRONTEND_DIR, html=True), name="frontend")
+# ── Frontend React (dist) ou fallback HTML ────────────────────────────────────
+_BASE       = os.path.dirname(__file__)
+_DIST_DIR   = os.path.join(_BASE, "..", "frontend", "dist")
+_ASSETS_DIR = os.path.join(_DIST_DIR, "assets")
+_HTML_DIR   = os.path.join(_BASE, "..", "frontend")
+
+if os.path.isdir(_DIST_DIR):
+    # Servir les assets compilés React
+    app.mount("/assets", StaticFiles(directory=_ASSETS_DIR), name="assets")
+
+    @app.get("/", include_in_schema=False)
+    @app.get("/login", include_in_schema=False)
+    @app.get("/dashboard", include_in_schema=False)
+    async def serve_spa():
+        return FileResponse(os.path.join(_DIST_DIR, "index.html"))
+
+elif os.path.isdir(_HTML_DIR):
+    # Fallback : ancien frontend HTML vanilla
+    app.mount("/ui", StaticFiles(directory=_HTML_DIR, html=True), name="frontend")
